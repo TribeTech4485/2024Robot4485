@@ -1,7 +1,9 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 public class RobotContainer {
   public RobotContainer() {
@@ -12,8 +14,10 @@ public class RobotContainer {
     return null;
   }
 
-  private void configureBindings() {
-    Robot.Primary.LeftBumper.or(Robot.Primary.RightBumper)
+  public void configureBindings() {
+    CommandScheduler.getInstance().getActiveButtonLoop().clear();
+
+    Robot.Zero.LeftBumper.or(Robot.Primary.RightBumper)
         .onTrue(new InstantCommand(() -> {
           Robot.DriveTrain.doSlowMode(true);
         }))
@@ -21,7 +25,7 @@ public class RobotContainer {
           Robot.DriveTrain.doSlowMode(false);
         }));
 
-    Robot.Primary.RightTrigger
+    Robot.Zero.RightTrigger
         .onTrue(new InstantCommand(() -> {
           Robot.DriveTrain.setBrakeMode(true);
         }))
@@ -29,16 +33,25 @@ public class RobotContainer {
           Robot.DriveTrain.setBrakeMode(false);
         }));
 
-    Robot.Primary.LeftTrigger
+    Robot.Zero.LeftTrigger
         .onTrue(new InstantCommand(() -> {
           Robot.DriveTrain.setBrakeMode(true);
         }))
         .onFalse(new InstantCommand(() -> {
           Robot.DriveTrain.setBrakeMode(false);
         }));
-    // Robot.Primary.X
-    //     .onTrue(new InstantCommand(() -> {
-    //       Robot.Limelight.alignTag();
-    //     }));
+
+    Robot.Zero.commObjectX.a().whileTrue(new StartEndCommand(() -> {
+      Robot.Intake.sendIt(15000);
+      System.out.println("Sending it");
+    }, () -> {
+      Robot.Intake.stopCommands();
+      System.out.println("Stopping it");
+    }));
+
+    // t.Primary.X
+    // nTrue(new InstantCommand(() -> {
+    // Robot.Limelight.alignTag();
+    // }));
   }
 }

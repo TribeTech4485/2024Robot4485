@@ -24,10 +24,10 @@ public class DriveTrainOld extends SubsystemBase {
   // There are 6 separate motor controllers with 1 pwm channel per controller
   public final CANSparkMax motorDriveLeft1 = new CANSparkMax(DriveConstants.leftDrive1Id, CANSparkLowLevel.MotorType.kBrushless);
   public final CANSparkMax motorDriveLeft2 = new CANSparkMax(DriveConstants.leftDrive2Id, CANSparkLowLevel.MotorType.kBrushless);
-  public final CANSparkMax motorDriveLeft3 = new CANSparkMax(DriveConstants.leftDrive3Id, CANSparkLowLevel.MotorType.kBrushless);
+  // public final CANSparkMax motorDriveLeft3 = new CANSparkMax(DriveConstants.leftDrive3Id, CANSparkLowLevel.MotorType.kBrushless);
   public final CANSparkMax motorDriveRight1 = new CANSparkMax(DriveConstants.rightDrive1Id, CANSparkLowLevel.MotorType.kBrushless);
   public final CANSparkMax motorDriveRight2 = new CANSparkMax(DriveConstants.rightDrive2Id, CANSparkLowLevel.MotorType.kBrushless);
-  public final CANSparkMax motorDriveRight3 = new CANSparkMax(DriveConstants.rightDrive3Id, CANSparkLowLevel.MotorType.kBrushless);
+  // public final CANSparkMax motorDriveRight3 = new CANSparkMax(DriveConstants.rightDrive3Id, CANSparkLowLevel.MotorType.kBrushless);
   private ArrayList<CANSparkMax> leftMotors = new ArrayList<CANSparkMax>(); // define in constructor
   private ArrayList<CANSparkMax> rightMotors = new ArrayList<CANSparkMax>(); // define in constructor
   private ArrayList<CANSparkMax> motors = new ArrayList<CANSparkMax>(); // define in constructor
@@ -55,10 +55,10 @@ public class DriveTrainOld extends SubsystemBase {
     System.out.print("Instatntiating drivetrain");
     leftMotors.add(motorDriveLeft1);
     leftMotors.add(motorDriveLeft2);
-    leftMotors.add(motorDriveLeft3);
+    // leftMotors.add(motorDriveLeft3);
     rightMotors.add(motorDriveRight1);
     rightMotors.add(motorDriveRight2);
-    rightMotors.add(motorDriveRight3);
+    // rightMotors.add(motorDriveRight3);
     motors.addAll(leftMotors);
     motors.addAll(rightMotors);
 

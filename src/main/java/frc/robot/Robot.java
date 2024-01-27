@@ -1,6 +1,8 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.SyncedLibraries.Controllers;
@@ -10,13 +12,14 @@ import frc.robot.SyncedLibraries.SystemBases.LimelightBase;
 import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 import frc.robot.SyncedLibraries.RobotState.*;
 import frc.robot.subsystems.DriveTrainNew;
-import frc.robot.subsystems.DriveTrainOld;
+import frc.robot.subsystems.Intake;
 
 public class Robot extends TimedRobot {
   public static RobotContainer m_robotContainer;
   public static Command AutonomousCommand;
   public static DriveTrainBase DriveTrain;
   public static LimelightBase Limelight;
+  public static Intake Intake;
 
   /**
    * The current state of the robot
@@ -26,46 +29,56 @@ public class Robot extends TimedRobot {
   public static RobotStateEnum robotState = RobotStateEnum.Disabled;
   public static ManipulatorStateEnum manipulatorState = ManipulatorStateEnum.Empty;
 
-  private static Controllers m_controllers = new Controllers(Constants.DriveConstants.controllerJoystickDeadband,
-      Constants.DriveConstants.controllerTriggerDeadband);
+  private static Controllers m_controllers;
   /** Driver */
-  public static ControllerBase Zero = m_controllers.Zero;
+  public static ControllerBase Zero;
   /** Copiolot */
-  public static ControllerBase One = m_controllers.One;
+  public static ControllerBase One;
   /** One-man show */
-  public static ControllerBase Two = m_controllers.Two;
+  public static ControllerBase Two;
   /** Guest controller */
-  public static ControllerBase Three = m_controllers.Three;
+  public static ControllerBase Three;
   /** UNUSED */
-  public static ControllerBase Four = m_controllers.Four;
+  public static ControllerBase Four;
   /** UNUSED */
-  public static ControllerBase Five = m_controllers.Five;
+  public static ControllerBase Five;
 
   /** Person controlling driving */
-  public static ControllerBase Primary = m_controllers.Primary;
+  public static ControllerBase Primary;
+  // public static ControllerBase Primary = m_controllers.One;
   /** Person controlling shooting */
-  public static ControllerBase Secondary = m_controllers.Secondary;
+  public static ControllerBase Secondary;
+  // public static ControllerBase Secondary = m_controllers.Two;
 
   @Override
   public void robotInit() {
     System.out.println("Robot Init");
 
+    DriverStation.silenceJoystickConnectionWarning(true);
+    m_controllers = new Controllers(Constants.DriveConstants.controllerJoystickDeadband,
+      Constants.DriveConstants.controllerTriggerDeadband);
     m_controllers.fullUpdate();
+    updateAutoControllers();
     // Three.setJoystickMultiplier(0.5);
-    m_controllers.addControllers(m_controllers.primaryControllerSelector, Zero, Two, Three);
-    m_controllers.addControllers(m_controllers.secondaryControllerSelector, One, Two, Three);
-    m_controllers.fullUpdate();
+    // m_controllers.addControllersToSelector(m_controllers.primaryControllerSelector, 0, 2, 3);
+    // m_controllers.addControllersToSelector(m_controllers.secondaryControllerSelector, 1, 2, 3);
+    // m_controllers.updateAutoControllers();
 
     m_robotContainer = new RobotContainer();
     AutonomousCommand = m_robotContainer.getAutonomousCommand();
-    DriveTrain = new DriveTrainNew(null, null, null, null, isAutonomousEnabled(), kDefaultPeriod, 0, 0, kDefaultPeriod, kDefaultPeriod, isAutonomous());
+    DriveTrain = new DriveTrainNew();
+    DriveTrain.resetAll();
+    DriveTrain.setDefaultCommand(new TeleDriveCommandBase());
     Limelight = new LimelightBase();
+    Intake = new Intake();
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    m_controllers.updateAutoControllers();
+    // m_controllers.updateAutoControllers();
+    // m_robotContainer.configureBindings();
+    SmartDashboard.putNumber("Shooter speed:", Intake.getAvePower());
   }
 
   @Override
@@ -96,7 +109,8 @@ public class Robot extends TimedRobot {
   public void teleopInit() {
     System.out.println("Robot Teleop");
 
-    m_controllers.fullUpdate();
+    // m_controllers.fullUpdate();
+    // m_robotContainer.configureBindings();
     if (AutonomousCommand != null) {
       AutonomousCommand.cancel();
     }
@@ -107,6 +121,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putBoolean("B presed", Zero.B.getAsBoolean());
   }
 
   @Override
@@ -115,6 +130,7 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().cancelAll();
     m_controllers.fullUpdate();
+    m_robotContainer.configureBindings();
     Robot.DriveTrain.resetAll();
     // Home all motors and sensors
     // spin up shooter
@@ -130,9 +146,23 @@ public class Robot extends TimedRobot {
     System.out.println("Robot Simulation");
 
     m_controllers.fullUpdate();
+    m_robotContainer.configureBindings();
   }
 
   @Override
   public void simulationPeriodic() {
+  }
+
+  /** TO ONLY BE CALLED BY m_controllers OBJECT */
+  public static void updateAutoControllers() {
+    Primary = m_controllers.Primary;
+    Secondary = m_controllers.Secondary;
+
+    Zero = m_controllers.Zero;
+    One = m_controllers.One;
+    Two = m_controllers.Two;
+    Three = m_controllers.Three;
+    Four = m_controllers.Four;
+    Five = m_controllers.Five;
   }
 }
