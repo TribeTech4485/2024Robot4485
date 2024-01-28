@@ -17,35 +17,43 @@ public class RobotContainer {
   public void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
-    Robot.Zero.LeftBumper.or(Robot.Primary.RightBumper)
-        .onTrue(new InstantCommand(() -> {
-          Robot.DriveTrain.doSlowMode(true);
-        }))
-        .onFalse(new InstantCommand(() -> {
-          Robot.DriveTrain.doSlowMode(false);
-        }));
+    // Robot.Zero.LeftBumper.or(Robot.Primary.RightBumper)
+        // .onTrue(new InstantCommand(() -> {
+          // Robot.DriveTrain.doSlowMode(true);
+        // }))
+        // .onFalse(new InstantCommand(() -> {
+          // Robot.DriveTrain.doSlowMode(false);
+        // }));
 
-    Robot.Zero.RightTrigger
-        .onTrue(new InstantCommand(() -> {
-          Robot.DriveTrain.setBrakeMode(true);
-        }))
-        .onFalse(new InstantCommand(() -> {
-          Robot.DriveTrain.setBrakeMode(false);
-        }));
+    // Robot.Zero.RightTrigger
+        // .onTrue(new InstantCommand(() -> {
+          // Robot.DriveTrain.setBrakeMode(true);
+        // }))
+        // .onFalse(new InstantCommand(() -> {
+          // Robot.DriveTrain.setBrakeMode(false);
+        // }));
 
-    Robot.Zero.LeftTrigger
-        .onTrue(new InstantCommand(() -> {
-          Robot.DriveTrain.setBrakeMode(true);
-        }))
-        .onFalse(new InstantCommand(() -> {
-          Robot.DriveTrain.setBrakeMode(false);
-        }));
+    // Robot.Zero.LeftTrigger
+        // .onTrue(new InstantCommand(() -> {
+          // Robot.DriveTrain.setBrakeMode(true);
+        // }))
+        // .onFalse(new InstantCommand(() -> {
+          // Robot.DriveTrain.setBrakeMode(false);
+        // }));
 
     Robot.Zero.commObjectX.a().whileTrue(new StartEndCommand(() -> {
       Robot.Intake.sendIt(15000);
       System.out.println("Sending it");
     }, () -> {
       Robot.Intake.stopCommands();
+      System.out.println("Stopping it");
+    }));
+
+    Robot.Zero.commObjectX.b().whileTrue(new StartEndCommand(() -> {
+      Robot.Shooter.sendIt(15000);
+      System.out.println("Sending it");
+    }, () -> {
+      Robot.Shooter.stopCommands();
       System.out.println("Stopping it");
     }));
 

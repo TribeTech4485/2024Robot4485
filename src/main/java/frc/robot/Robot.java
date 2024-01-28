@@ -13,6 +13,7 @@ import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 import frc.robot.SyncedLibraries.RobotState.*;
 import frc.robot.subsystems.DriveTrainNew;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 public class Robot extends TimedRobot {
   public static RobotContainer m_robotContainer;
@@ -20,6 +21,7 @@ public class Robot extends TimedRobot {
   public static DriveTrainBase DriveTrain;
   public static LimelightBase Limelight;
   public static Intake Intake;
+  public static Shooter Shooter;
 
   /**
    * The current state of the robot
@@ -71,6 +73,7 @@ public class Robot extends TimedRobot {
     DriveTrain.setDefaultCommand(new TeleDriveCommandBase());
     Limelight = new LimelightBase();
     Intake = new Intake();
+    Shooter = new Shooter();
   }
 
   @Override
