@@ -32,7 +32,7 @@ public class Turret extends ManipulatorBase {
 
   public void moveToLimeLight() {
     setPositionPID(kP, kI, kD, tolerance);
-    int target = (int) (Robot.Limelight.getX() * 20);
+    int target = (int) (Robot.Limelight.getY() * 20);
     moveToPosition(target);
   }
 

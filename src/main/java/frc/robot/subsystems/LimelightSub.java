@@ -11,7 +11,9 @@ import frc.robot.SyncedLibraries.SystemBases.LimelightBase;
 
 public class LimelightSub extends LimelightBase {
   /** Creates a new ExampleSubsystem. */
-  public LimelightSub() {}
+  public LimelightSub() {
+    super();
+  }
 
   /**
    * Example command factory method.
@@ -23,11 +25,7 @@ public class LimelightSub extends LimelightBase {
     // Subsystem::RunOnce implicitly requires `this` subsystem.
     return runOnce(
         () -> {
-          getX();
-          getY();
-          getArea();
           
-
         });
   }
 
