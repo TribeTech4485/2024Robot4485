@@ -15,7 +15,6 @@ public class Shooter extends ManipulatorBase {
   private static final double kI = DeviceConstants.shooterSpeedKI;
   private static final double kD = DeviceConstants.shooterSpeedKD;
   private static final double tolerance = DeviceConstants.shooterSpeedTolerance;
-  int targetSpeed = 20000;
 
   public Shooter() {
     addMotors(new CANSparkMax(DeviceConstants.shooterMotorId, CANSparkMax.MotorType.kBrushless));
@@ -23,7 +22,6 @@ public class Shooter extends ManipulatorBase {
     setSpeedPID(kP, kI, kD, tolerance);
     setSpeedMultiplier(1);
     setBrakeMode(false);
-    // SmartDashboard.putNumber("Shooter target", targetSpeed);
   }
 
   public void sendIt(int speed) {
@@ -35,6 +33,6 @@ public class Shooter extends ManipulatorBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter speed", getCurrentSpeed());
-    SmartDashboard.putNumber("Shooter target", targetSpeed);
+    SmartDashboard.putNumber("Shooter target", getSpeedCommand().getTargetSpeed());
   }
 }

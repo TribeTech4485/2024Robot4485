@@ -10,29 +10,29 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DeviceConstants;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 
-public class Intake extends ManipulatorBase {
-  private static final double kP = DeviceConstants.intakeSpeedKP;
-  private static final double kI = DeviceConstants.intakeSpeedKI;
-  private static final double kD = DeviceConstants.intakeSpeedKD;
-  private static final double tolerance = DeviceConstants.intakeSpeedTolerance;
+public class Turret extends ManipulatorBase {
+  private static final double kP = DeviceConstants.turretPositionKP;
+  private static final double kI = DeviceConstants.turretPositionKI;
+  private static final double kD = DeviceConstants.turretPositionKD;
+  private static final double tolerance = DeviceConstants.turretPositionTolerance;
 
-  public Intake() {
-    addMotors(new CANSparkMax(DeviceConstants.intakeMotorId, CANSparkMax.MotorType.kBrushless));
+  public Turret() {
+    addMotors(new CANSparkMax(DeviceConstants.turretMotorId, CANSparkMax.MotorType.kBrushless));
 
     setSpeedPID(kP, kI, kD, tolerance);
     setSpeedMultiplier(1);
-    setBrakeMode(false);
+    setBrakeMode(true);
   }
 
   public void sendIt(int speed) {
     setPositionPID(kP, kI, kD, tolerance);
-    setTargetSpeed(speed);
+    moveToPosition(speed);
     // getSpeedCommand().andThen(new InstantCommand(() -> fullStop()));
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Intake speed", getCurrentSpeed());
-    SmartDashboard.putNumber("Intake target", getSpeedCommand().getTargetSpeed());
+    SmartDashboard.putNumber("Turret position", getPosition());
+    SmartDashboard.putNumber("Turret target", getMoveCommand().getTargetPosition());
   }
 }
