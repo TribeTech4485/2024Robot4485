@@ -31,4 +31,10 @@ public class Shooter extends ManipulatorBase {
     setTargetSpeed(speed);
     // getSpeedCommand().andThen(new InstantCommand(() -> fullStop()));
   }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Shooter speed", getCurrentSpeed());
+    SmartDashboard.putNumber("Shooter target", targetSpeed);
+  }
 }

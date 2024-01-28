@@ -37,6 +37,11 @@ public class Intake extends ManipulatorBase {
 
   @Override
   public void periodic() {
+<<<<<<< HEAD
     SmartDashboard.putNumber("Intake Encoder Speed", getCurrentSpeed());
+=======
+    SmartDashboard.putNumber("Intake speed", getCurrentSpeed());
+    SmartDashboard.putNumber("Intake target", targetSpeed);
+>>>>>>> 1fc01430e9689aae5b691564a232ce9b0df74d41
   }
 }
