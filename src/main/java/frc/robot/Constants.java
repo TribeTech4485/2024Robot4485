@@ -44,25 +44,27 @@ public final class Constants {
    */
   public static final class DeviceConstants {
     public static final int PCMId = 6;
-    public static final int intakeMotorId = 5;
-    public static final int shooterMotorId = 6;
+    public static final int intakeMotorId = 9;
+    public static final int shooterMotor1Id = 6;
+    public static final int shooterMotor2Id = 5;
     public static final int turretMotorId = 7;
     public static final int LightPWM = 0;
 
-    public static final double intakeSpeedKP = 0.00003;
-    public static final double intakeSpeedKI = 0.00000;
-    public static final double intakeSpeedKD = 0.0000;
+    public static final double intakeSpeedKP = 0.00001;
+    public static final double intakeSpeedKI = 0.00075;
+    public static final double intakeSpeedKD = 0.000001;
     public static final double intakeSpeedTolerance = 0;
 
-    public static final double shooterSpeedKP = 0.00003;
-    public static final double shooterSpeedKI = 0;
+    public static final double shooterSpeedKP = 0.00005;
+    public static final double shooterSpeedKI = 0.0005;
     public static final double shooterSpeedKD = 0;
-    public static final double shooterSpeedTolerance = 0;
+    public static final double shooterSpeedTolerance = 25;
 
     public static final double turretPositionKP = 0;
     public static final double turretPositionKI = 0;
     public static final double turretPositionKD = 0;
     public static final double turretPositionTolerance = 0;
+    public static final double turretPositionMultiplier = 50;
   }
 
   public static final class WiringConstants {

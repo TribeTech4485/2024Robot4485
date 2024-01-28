@@ -20,8 +20,7 @@ public class Turret extends ManipulatorBase {
   public Turret() {
     addMotors(new CANSparkMax(DeviceConstants.turretMotorId, CANSparkMax.MotorType.kBrushless));
 
-    setSpeedPID(kP, kI, kD, tolerance);
-    setSpeedMultiplier(1);
+    setPositionMultiplier(DeviceConstants.turretPositionMultiplier);
     setBrakeMode(true);
   }
 
