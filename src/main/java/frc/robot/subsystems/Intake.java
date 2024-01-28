@@ -23,12 +23,20 @@ public class Intake extends ManipulatorBase {
     setSpeedPID(kP, kI, kD, tolerance);
     setSpeedMultiplier(1);
     setBrakeMode(false);
-    SmartDashboard.putNumber("Intake target", targetSpeed);
+    // SmartDashboard.putNumber("Intake target", targetSpeed);
+
+    for (CANSparkMax motor : getMotors()) {
+    }
   }
 
   public void sendIt(int speed) {
     setSpeedPID(kP, kI, kD, tolerance);
     setTargetSpeed(speed);
     // getSpeedCommand().andThen(new InstantCommand(() -> fullStop()));
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Intake Encoder Speed", getCurrentSpeed());
   }
 }

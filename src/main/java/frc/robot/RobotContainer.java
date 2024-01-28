@@ -42,19 +42,21 @@ public class RobotContainer {
         // }));
 
     Robot.Zero.commObjectX.a().whileTrue(new StartEndCommand(() -> {
-      Robot.Intake.sendIt(15000);
-      System.out.println("Sending it");
+      Robot.Intake.sendIt(35000);
+      System.out.println("Sending it intake");
     }, () -> {
       Robot.Intake.stopCommands();
-      System.out.println("Stopping it");
+      System.out.println("Stopping it intake");
     }));
 
+    // Robot.Zero.commObjectX.y().onTrue(new InstantCommand(() -> Robot.Intake.setPower(1, false)));
+
     Robot.Zero.commObjectX.b().whileTrue(new StartEndCommand(() -> {
-      Robot.Shooter.sendIt(15000);
-      System.out.println("Sending it");
+      Robot.Shooter.sendIt(35000);
+      System.out.println("Sending it shooter");
     }, () -> {
       Robot.Shooter.stopCommands();
-      System.out.println("Stopping it");
+      System.out.println("Stopping it shooter");
     }));
 
     // t.Primary.X

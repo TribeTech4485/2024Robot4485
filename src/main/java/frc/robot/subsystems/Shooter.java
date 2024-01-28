@@ -23,7 +23,7 @@ public class Shooter extends ManipulatorBase {
     setSpeedPID(kP, kI, kD, tolerance);
     setSpeedMultiplier(1);
     setBrakeMode(false);
-    SmartDashboard.putNumber("Shooter target", targetSpeed);
+    // SmartDashboard.putNumber("Shooter target", targetSpeed);
   }
 
   public void sendIt(int speed) {
