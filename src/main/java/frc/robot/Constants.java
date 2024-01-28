@@ -54,7 +54,7 @@ public final class Constants {
     public static final double intakeSpeedKD = 0.0000;
     public static final double intakeSpeedTolerance = 0;
 
-    public static final double shooterSpeedKP = 0;
+    public static final double shooterSpeedKP = 0.00003;
     public static final double shooterSpeedKI = 0;
     public static final double shooterSpeedKD = 0;
     public static final double shooterSpeedTolerance = 0;
