@@ -13,6 +13,7 @@ import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 import frc.robot.SyncedLibraries.RobotState.*;
 import frc.robot.subsystems.DriveTrainNew;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LimelightSub;
 import frc.robot.subsystems.Shooter;
 
 public class Robot extends TimedRobot {
@@ -71,7 +72,7 @@ public class Robot extends TimedRobot {
     DriveTrain = new DriveTrainNew();
     DriveTrain.resetAll();
     DriveTrain.setDefaultCommand(new TeleDriveCommandBase());
-    Limelight = new LimelightBase();
+    Limelight = new LimelightSub();
     Intake = new Intake();
     Shooter = new Shooter();
   }
