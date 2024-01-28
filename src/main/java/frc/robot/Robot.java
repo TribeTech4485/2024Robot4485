@@ -52,7 +52,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
-    System.out.println("Robot Init");
+    System.out.println("Robot Initializing");
 
     DriverStation.silenceJoystickConnectionWarning(true);
     m_controllers = new Controllers(Constants.DriveConstants.controllerJoystickDeadband,
@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    System.out.println("Robot Autonomous");
+    System.out.println("Robot in Autonomous Mode");
 
     AutonomousCommand = m_robotContainer.getAutonomousCommand();
     if (AutonomousCommand != null) {
@@ -107,7 +107,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    System.out.println("Robot Teleop");
+    System.out.println("Robot in Teleoperated Mode");
 
     // m_controllers.fullUpdate();
     // m_robotContainer.configureBindings();
@@ -121,12 +121,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putBoolean("B presed", Zero.B.getAsBoolean());
+    SmartDashboard.putBoolean("B pressed", Zero.B.getAsBoolean());
   }
 
   @Override
   public void testInit() {
-    System.out.println("Robot Test");
+    System.out.println("Robot in Test Mode");
 
     CommandScheduler.getInstance().cancelAll();
     m_controllers.fullUpdate();
@@ -143,7 +143,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void simulationInit() {
-    System.out.println("Robot Simulation");
+    System.out.println("Robot in Simulation Mode");
 
     m_controllers.fullUpdate();
     m_robotContainer.configureBindings();
