@@ -31,4 +31,10 @@ public class Intake extends ManipulatorBase {
     setTargetSpeed(speed);
     // getSpeedCommand().andThen(new InstantCommand(() -> fullStop()));
   }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Intake speed", getCurrentSpeed());
+    SmartDashboard.putNumber("Intake target", targetSpeed);
+  }
 }
