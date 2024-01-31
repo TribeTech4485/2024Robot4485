@@ -81,7 +81,12 @@ public class RobotContainer {
     Robot.Zero.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.adjust()));
 
     // sudo kill -f *
-    Robot.Zero.LeftBumper.get().and(Robot.Zero.RightBumper.get()).and(Robot.Zero.LeftTrigger.get())
-        .and(Robot.Zero.RightTrigger.get()).onTrue(new InstantCommand(() -> Robot.KILLIT()));
+    Robot.doOnAllControllers((controller) -> 
+      controller.LeftBumper.get()
+          .and(controller.LeftTrigger.get())
+          .and(controller.RightBumper.get())
+          .and(controller.RightTrigger.get())
+          .onTrue(new InstantCommand(() -> Robot.KILLIT()))
+    );
   }
 }

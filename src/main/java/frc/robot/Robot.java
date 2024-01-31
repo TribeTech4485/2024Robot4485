@@ -57,12 +57,14 @@ public class Robot extends TimedRobot {
 
     DriverStation.silenceJoystickConnectionWarning(true);
     m_controllers = new Controllers(Constants.DriveConstants.controllerJoystickDeadband,
-      Constants.DriveConstants.controllerTriggerDeadband);
+        Constants.DriveConstants.controllerTriggerDeadband);
     m_controllers.fullUpdate();
     updateAutoControllers();
     // Three.setJoystickMultiplier(0.5);
-    // m_controllers.addControllersToSelector(m_controllers.primaryControllerSelector, 0, 2, 3);
-    // m_controllers.addControllersToSelector(m_controllers.secondaryControllerSelector, 1, 2, 3);
+    // m_controllers.addControllersToSelector(m_controllers.primaryControllerSelector,
+    // 0, 2, 3);
+    // m_controllers.addControllersToSelector(m_controllers.secondaryControllerSelector,
+    // 1, 2, 3);
     // m_controllers.updateAutoControllers();
 
     m_robotContainer = new RobotContainer();
@@ -166,6 +168,25 @@ public class Robot extends TimedRobot {
     Three = m_controllers.Three;
     Four = m_controllers.Four;
     Five = m_controllers.Five;
+  }
+
+  /**
+   * To run:
+   * <p>
+   * Robot.doOnAllControllers((controller) -> {});
+   */
+  public static void doOnAllControllers(ControllerRunnable r) {
+    r.run(Zero);
+    r.run(One);
+    r.run(Two);
+    r.run(Three);
+    r.run(Four);
+    r.run(Five);
+  }
+
+  /** Ignore this thing */
+  public static interface ControllerRunnable {
+    public void run(ControllerBase controller);
   }
 
   public static void KILLIT() {
