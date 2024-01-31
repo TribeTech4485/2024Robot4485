@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Robot;
+// import frc.robot.Robot;
 import frc.robot.Constants.DeviceConstants;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 
@@ -29,11 +29,11 @@ public class Turret extends ManipulatorBase {
     moveToPosition(speed);
   }
 
-  public void moveToLimeLight() {
-    setPositionPID(kP, kI, kD, tolerance);
-    int target = (int) (Robot.Limelight.getY() * 20);
-    moveToPosition(target);
-  }
+  // public void moveToLimeLight() {
+    // setPositionPID(kP, kI, kD, tolerance);
+    // int target = (int) (Robot.Limelight.getY() * 20);
+    // moveToPosition(target);
+  // }
 
   @Override
   public void periodic() {
