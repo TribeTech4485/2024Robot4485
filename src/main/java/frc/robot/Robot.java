@@ -132,9 +132,6 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationInit() {
     System.out.println("Robot in Simulation Mode");
-
-    m_controllers.fullUpdate();
-    m_robotContainer.configureBindings();
   }
 
   @Override

@@ -17,30 +17,6 @@ public class RobotContainer {
   public void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
-    // Robot.Zero.LeftBumper.or(Robot.Primary.RightBumper)
-    // .onTrue(new InstantCommand(() -> {
-    // Robot.DriveTrain.doSlowMode(true);
-    // }))
-    // .onFalse(new InstantCommand(() -> {
-    // Robot.DriveTrain.doSlowMode(false);
-    // }));
-
-    // Robot.Zero.RightTrigger
-    // .onTrue(new InstantCommand(() -> {
-    // Robot.DriveTrain.setBrakeMode(true);
-    // }))
-    // .onFalse(new InstantCommand(() -> {
-    // Robot.DriveTrain.setBrakeMode(false);
-    // }));
-
-    // Robot.Zero.LeftTrigger
-    // .onTrue(new InstantCommand(() -> {
-    // Robot.DriveTrain.setBrakeMode(true);
-    // }))
-    // .onFalse(new InstantCommand(() -> {
-    // Robot.DriveTrain.setBrakeMode(false);
-    // }));
-
     Robot.Zero.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
         SmartDashboard.getNumber("Shooter target", 0))));
     Robot.Zero.B.get().onTrue(new InstantCommand(() -> Robot.Shooter.stopCommands()));
