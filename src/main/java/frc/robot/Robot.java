@@ -11,10 +11,7 @@ import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
 import frc.robot.SyncedLibraries.SystemBases.LimelightBase;
 import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 import frc.robot.SyncedLibraries.RobotState.*;
-import frc.robot.subsystems.DriveTrainNew;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.LimelightSub;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.*;
 
 public class Robot extends TimedRobot {
   public static RobotContainer m_robotContainer;
@@ -23,6 +20,7 @@ public class Robot extends TimedRobot {
   public static LimelightBase Limelight;
   public static Intake Intake;
   public static Shooter Shooter;
+  public static Turret Turret;
 
   /**
    * The current state of the robot
@@ -168,5 +166,12 @@ public class Robot extends TimedRobot {
     Three = m_controllers.Three;
     Four = m_controllers.Four;
     Five = m_controllers.Five;
+  }
+
+  public static void KILLIT() {
+    System.out.println("KILLING IT");
+    // Professor X, add whatever your plan is to stop the robot here
+
+    System.exit(0);
   }
 }

@@ -41,9 +41,6 @@ public class RobotContainer {
     // .onFalse(new InstantCommand(() -> {
     // Robot.DriveTrain.setBrakeMode(false);
     // }));
-
-    int lowSpeed = 1000;
-    int highSpeed = 5000;
     Robot.Zero.RightBumper.get().whileTrue(new StartEndCommand(() -> {
       // Robot.Shooter.sendIt(lowSpeed);
       System.out.println("Sending it");
@@ -83,9 +80,8 @@ public class RobotContainer {
     Robot.Zero.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(0)));
     Robot.Zero.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.adjust()));
 
-    // t.Primary.X
-    // nTrue(new InstantCommand(() -> {
-    // Robot.Limelight.alignTag();
-    // }));
+    // sudo kill -f *
+    Robot.Zero.LeftBumper.get().and(Robot.Zero.RightBumper.get()).and(Robot.Zero.LeftTrigger.get())
+        .and(Robot.Zero.RightTrigger.get()).onTrue(new InstantCommand(() -> Robot.KILLIT()));
   }
 }
