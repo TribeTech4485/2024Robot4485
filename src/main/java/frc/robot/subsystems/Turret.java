@@ -29,12 +29,6 @@ public class Turret extends ManipulatorBase {
     moveToPosition(speed);
   }
 
-  // public void moveToLimeLight() {
-    // setPositionPID(kP, kI, kD, tolerance);
-    // int target = (int) (Robot.Limelight.getY() * 20);
-    // moveToPosition(target);
-  // }
-
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Turret position", getPosition());

@@ -15,7 +15,8 @@ public class DriveTrainNew extends DriveTrainBase {
       new CANSparkMax(4, CANSparkMax.MotorType.kBrushless) };
 
   public DriveTrainNew() {
-    super(leftDriveMotorsInput, rightDriveMotorsInput, PneumaticsModuleType.CTREPCM, new int[] {}, false,
+    super(leftDriveMotorsInput, rightDriveMotorsInput, PneumaticsModuleType.CTREPCM,
+        new int[] {}, false,
         DriveConstants.drivingMax, DriveConstants.driveAmpsMax, DriveConstants.drivingRamp,
         DriveConstants.WHEEL_DIAMETER, DriveConstants.PULSES_PER_REVOLUTION, true);
   }

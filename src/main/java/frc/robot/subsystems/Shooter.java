@@ -26,7 +26,7 @@ public class Shooter extends ManipulatorBase {
     SmartDashboard.putNumber("shooterP", kP);
     SmartDashboard.putNumber("shooterI", kI);
     SmartDashboard.putNumber("shooterD", kD);
-    SmartDashboard.putNumber("Shooter target", 2000);
+    SmartDashboard.putNumber("Shooter target", 0);
   }
 
   public void sedPID(double target) {

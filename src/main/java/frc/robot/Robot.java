@@ -1,5 +1,13 @@
 package frc.robot;
 
+import java.lang.management.GarbageCollectorMXBean;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryPoolMXBean;
+import java.util.List;
+
+import org.photonvision.PhotonCamera;
+
+import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +27,7 @@ public class Robot extends TimedRobot {
   public static Intake Intake;
   public static Shooter Shooter;
   public static Turret Turret;
+  public static PhotonCamera camera = new PhotonCamera("photonvision");
 
   /**
    * The current state of the robot
@@ -42,36 +51,45 @@ public class Robot extends TimedRobot {
   /** UNUSED */
   public static ControllerBase Five;
 
-  private static TeleDriveCommandBase TeleDriveCommand = new TeleDriveCommandBase(Zero, Two, Three);
+  private static TeleDriveCommandBase TeleDriveCommand;
+
+  static int countgujhbgnu = 0;
 
   @Override
   public void robotInit() {
     System.out.println("Robot Initializing");
+    PortForwarder.add(5800, "10.44.85.21", 5800);
+    PortForwarder.add(1182, "10.44.85.21", 1182);
 
     DriverStation.silenceJoystickConnectionWarning(true);
-    m_controllers = new Controllers(Constants.DriveConstants.controllerJoystickDeadband,
-        Constants.DriveConstants.controllerTriggerDeadband);
-    m_controllers.fullUpdate();
+    UpdateControllers();
 
     m_robotContainer = new RobotContainer();
     AutonomousCommand = m_robotContainer.getAutonomousCommand();
     DriveTrain = new DriveTrainNew();
     DriveTrain.resetAll();
+    TeleDriveCommand = new TeleDriveCommandBase(Zero, Two, Three);
     Intake = new Intake();
     Shooter = new Shooter();
+    // Turret = new Turret();
+    camera.setPipelineIndex(0);
+    camera.setDriverMode(false);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("Shooter speed:", Intake.getAvePower());
+    if (countgujhbgnu++ % 50 == 0) {
+      // logStuff();
+    }
   }
 
   @Override
   public void disabledInit() {
     System.out.println("Robot Disabled");
     CommandScheduler.getInstance().cancel(TeleDriveCommand);
-    CommandScheduler.getInstance().cancel(m_robotContainer.getAutonomousCommand());
+    CommandScheduler.getInstance().cancel(AutonomousCommand);
   }
 
   @Override
@@ -123,6 +141,7 @@ public class Robot extends TimedRobot {
     // Home all motors and sensors
     // spin up shooter
     // turn on intake
+    Turret.home();
   }
 
   @Override
@@ -158,9 +177,45 @@ public class Robot extends TimedRobot {
   }
 
   public static void KILLIT() {
-    System.out.println("KILLING IT");
+    DriverStation.reportError("KILLING IT", true);
     // Professor X, add whatever your plan is to stop the robot here
+    DriveTrain.setBrakeMode(true);
+    Shooter.setBrakeMode(true);
+    Intake.setBrakeMode(true);
+    Turret.setBrakeMode(true);
+    DriveTrain.stop();
+    Shooter.stop();
+    Intake.stop();
+    Turret.stop();
 
+    DriverStation.reportError("KILLED IT, EXITING NOW", true);
     System.exit(0);
+  }
+
+  private void UpdateControllers() {
+    m_controllers = new Controllers(
+        Constants.DriveConstants.controllerJoystickDeadband,
+        Constants.DriveConstants.controllerTriggerDeadband);
+    m_controllers.fullUpdate();
+    Zero = m_controllers.Zero;
+    One = m_controllers.One;
+    Two = m_controllers.Two;
+    Three = m_controllers.Three;
+    Four = m_controllers.Four;
+    Five = m_controllers.Five;
+  }
+
+  private void logStuff() {
+
+    System.out.println(("Heap" + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage()));
+    System.out.println(("NonHeap" + ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage()));
+    List<MemoryPoolMXBean> beans = ManagementFactory.getMemoryPoolMXBeans();
+    for (MemoryPoolMXBean bean : beans) {
+      System.out.println((bean.getName() + bean.getUsage()));
+    }
+
+    for (GarbageCollectorMXBean bean : ManagementFactory.getGarbageCollectorMXBeans()) {
+      System.out.println((bean.getName() + bean.getCollectionCount() + bean.getCollectionTime()));
+    }
   }
 }
