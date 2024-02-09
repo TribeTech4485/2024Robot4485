@@ -17,11 +17,11 @@ public class RobotContainer {
   public void configureBindings() {
     CommandScheduler.getInstance().getActiveButtonLoop().clear();
 
-    Robot.Zero.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
-        SmartDashboard.getNumber("Shooter target", 0))));
-    Robot.Zero.B.get().onTrue(new InstantCommand(() -> Robot.Shooter.stopCommands()));
-    Robot.Zero.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(0)));
-    Robot.Zero.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.adjust()));
+    // Robot.Zero.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
+    //     SmartDashboard.getNumber("Shooter target", 0))));
+    // Robot.Zero.B.get().onTrue(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+    // Robot.Zero.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(0)));
+    // Robot.Zero.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.adjust()));
 
     // sudo kill -f *
     Robot.doOnAllControllers(

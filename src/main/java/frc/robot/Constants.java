@@ -30,7 +30,7 @@ public final class Constants {
 
     public static final int driveAmpsMax = 20;
     public static final int drivingExponent = 1;
-    public static final double drivingRamp = 0.1;
+    public static final double drivingRamp = 0;
     public static final double controllerJoystickDeadband = 0.1;
     public static final double controllerTriggerDeadband = 0.1;
     public static final double drivingMax = 1;

@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
 
@@ -19,6 +20,7 @@ public class DriveTrainNew extends DriveTrainBase {
         new int[] {}, false,
         DriveConstants.drivingMax, DriveConstants.driveAmpsMax, DriveConstants.drivingRamp,
         DriveConstants.WHEEL_DIAMETER, DriveConstants.PULSES_PER_REVOLUTION, true);
+    invertAll();
   }
 
   @Override
@@ -28,5 +30,11 @@ public class DriveTrainNew extends DriveTrainBase {
     resetEncoders();
     resetGyro();
     doSlowMode(false);
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Left Drive Speed", getLeftSpeed());
+    SmartDashboard.putNumber("Right Drive Speed", getRightSpeed());
   }
 }

@@ -68,10 +68,11 @@ public class Robot extends TimedRobot {
     AutonomousCommand = m_robotContainer.getAutonomousCommand();
     DriveTrain = new DriveTrainNew();
     DriveTrain.resetAll();
+    DriveTrain.invertAll();
     TeleDriveCommand = new TeleDriveCommandBase(Zero, Two, Three);
     Intake = new Intake();
     Shooter = new Shooter();
-    // Turret = new Turret();
+    Turret = new Turret();
     camera.setPipelineIndex(0);
     camera.setDriverMode(false);
   }
@@ -201,6 +202,7 @@ public class Robot extends TimedRobot {
     One = m_controllers.One;
     Two = m_controllers.Two;
     Three = m_controllers.Three;
+    Three.setJoystickMultiplier(0.5);
     Four = m_controllers.Four;
     Five = m_controllers.Five;
   }

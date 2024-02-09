@@ -22,6 +22,7 @@ public class Turret extends ManipulatorBase {
 
     setPositionMultiplier(DeviceConstants.turretPositionMultiplier);
     setBrakeMode(true);
+    setPositionPID(kP, kI, kD, tolerance);
   }
 
   public void sendIt(int speed) {
