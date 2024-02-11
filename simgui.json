@@ -4,6 +4,20 @@
       "/FMSInfo": "FMSInfo"
     }
   },
+  "NetworkTables": {
+    "transitory": {
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        }
+      },
+      "photonvision": {
+        "photonvision": {
+          "open": true
+        }
+      }
+    }
+  },
   "NetworkTables Info": {
     "visible": true
   }

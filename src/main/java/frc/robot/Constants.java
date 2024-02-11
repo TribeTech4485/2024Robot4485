@@ -1,11 +1,4 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
-
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.GenericHID.HIDType;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -31,8 +24,8 @@ public final class Constants {
     public static final int driveAmpsMax = 20;
     public static final int drivingExponent = 1;
     public static final double drivingRamp = 0;
-    public static final double controllerJoystickDeadband = 0.1;
-    public static final double controllerTriggerDeadband = 0.1;
+    public static final double controllerJoystickDeadband = 0.15;
+    public static final double controllerTriggerDeadband = 0.05;
     public static final double drivingMax = 1;
 
     public static final double WHEEL_DIAMETER = 3; // inches
@@ -45,9 +38,9 @@ public final class Constants {
   public static final class DeviceConstants {
     public static final int PCMId = 6;
     public static final int intakeMotorId = 9;
-    public static final int shooterMotor1Id = 6;
+    public static final int shooterMotor1Id = 7;
     public static final int shooterMotor2Id = 5;
-    public static final int turretMotorId = 7;
+    public static final int turretMotorId = 10;
     public static final int LightPWM = 0;
 
     public static final double intakeSpeedKP = 0.00001;
@@ -163,153 +156,153 @@ public final class Constants {
 
     // RobotContainer.controller0.getType() Ps4 = kHIDGamepad Xbox = kXInputGamepad
     // ATK3 = kHIDJoystick
-    public static int SmartMap(GenericHID controller, String ButtonName) {
-      int ButtonID = 1;
-      HIDType hidType = null;
-      try {
-        hidType = controller.getType();
-      } catch (java.lang.IllegalArgumentException e) {
-        System.out.println("Exception: " + e + " || " + controller.getPort());
-        return 0;
-      }
-      HIDType isXBox = HIDType.kXInputGamepad;
-      HIDType isPS4 = HIDType.kHIDGamepad;
-      HIDType isJoystick = HIDType.kHIDJoystick;
-      switch (ButtonName) {
-        case "A":
-          if (hidType == isXBox) {
-            ButtonID = 1;
-          } else if (hidType == isPS4) {
-            ButtonID = 2;
-          } else {
-          }
-          break;
-        case "B":
-          if (hidType == isXBox) {
-            ButtonID = 2;
-          } else if (hidType == isPS4) {
-            ButtonID = 3;
-          } else {
-          }
-          break;
-        case "X":
-          if (hidType == isXBox) {
-            ButtonID = 3;
-          } else if (hidType == isPS4) {
-            ButtonID = 1;
-          } else {
-          }
-          break;
-        case "Y":
-          if (hidType == isXBox) {
-            ButtonID = 4;
-          } else if (hidType == isPS4) {
-            ButtonID = 4;
-          } else {
-          }
-          break;
-        case "LBump":
-          if (hidType == isXBox) {
-            ButtonID = 5;
-          } else if (hidType == isPS4) {
-            ButtonID = 5;
-          } else {
-          }
-          break;
-        case "RBump":
-          if (hidType == isXBox) {
-            ButtonID = 6;
-          } else if (hidType == isPS4) {
-            ButtonID = 6;
-          } else {
-          }
-          break;
-        case "LStick":
-          if (hidType == isXBox) {
-            ButtonID = 9;
-          } else if (hidType == isPS4) {
-            ButtonID = 11;
-          } else {
-          }
-          break;
-        case "RStick":
-          if (hidType == isXBox) {
-            ButtonID = 10;
-          } else if (hidType == isPS4) {
-            ButtonID = 12;
-          } else {
-          }
-          break;
-        case "DoubleSquare": // PS4 = share XBOX IS UNSURE
-          if (hidType == isXBox) {
-            ButtonID = 7;
-          } else if (hidType == isPS4) {
-            ButtonID = 9;
-          } else {
-          }
-          break;
-        case "Options":
-          if (hidType == isXBox) {
-            ButtonID = 8;
-          } else if (hidType == isPS4) {
-            ButtonID = 10;
-          } else {
-          }
-          break;
-        case "Xbox": // XBOX IS UNSURE
-          if (hidType == isXBox) {
-          } else if (hidType == isPS4) {
-            ButtonID = 13;
-          } else {
-          }
-          break;
-        case "Touchpad": // XBOX DOES NOT EXIST (map as xbox button once found)
-          if (hidType == isXBox) {
-          } else if (hidType == isPS4) {
-            ButtonID = 14;
-          } else {
-          }
-          break;
-        case "Trigger":
-          if (hidType == isXBox) {
-          } else if (hidType == isPS4) {
-          } else if (hidType == isJoystick) {
-            ButtonID = 1;
-          } else {
-          }
-          break;
-        case "RTrigger":
-          if (hidType == isXBox) {
-          } else if (hidType == isPS4) {
-            ButtonID = 8;
-          } else {
-          }
-          break;
-        case "LTrigger":
-          if (hidType == isXBox) {
-          } else if (hidType == isPS4) {
-            ButtonID = 7;
-          } else {
-          }
-          break;
-        case "":
-          if (hidType == isXBox) {
-            ButtonID = 1;
-          } else if (hidType == isPS4) {
-            ButtonID = 1;
-          } else {
-          }
-          break;
-        default:
-          try {
-            ButtonID = Integer.parseInt(ButtonName);
-            break;
-          } catch (NumberFormatException e) {
-            break;
-          }
-      }
-      // System.out.println("SmartMap " + ButtonName + " Port:" + ButtonID);
-      return ButtonID;
-    }
+    // public static int SmartMap(GenericHID controller, String ButtonName) {
+    // int ButtonID = 1;
+    // HIDType hidType = null;
+    // try {
+    // hidType = controller.getType();
+    // } catch (java.lang.IllegalArgumentException e) {
+    // System.out.println("Exception: " + e + " || " + controller.getPort());
+    // return 0;
+    // }
+    // HIDType isXBox = HIDType.kXInputGamepad;
+    // HIDType isPS4 = HIDType.kHIDGamepad;
+    // HIDType isJoystick = HIDType.kHIDJoystick;
+    // switch (ButtonName) {
+    // case "A":
+    // if (hidType == isXBox) {
+    // ButtonID = 1;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 2;
+    // } else {
+    // }
+    // break;
+    // case "B":
+    // if (hidType == isXBox) {
+    // ButtonID = 2;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 3;
+    // } else {
+    // }
+    // break;
+    // case "X":
+    // if (hidType == isXBox) {
+    // ButtonID = 3;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 1;
+    // } else {
+    // }
+    // break;
+    // case "Y":
+    // if (hidType == isXBox) {
+    // ButtonID = 4;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 4;
+    // } else {
+    // }
+    // break;
+    // case "LBump":
+    // if (hidType == isXBox) {
+    // ButtonID = 5;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 5;
+    // } else {
+    // }
+    // break;
+    // case "RBump":
+    // if (hidType == isXBox) {
+    // ButtonID = 6;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 6;
+    // } else {
+    // }
+    // break;
+    // case "LStick":
+    // if (hidType == isXBox) {
+    // ButtonID = 9;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 11;
+    // } else {
+    // }
+    // break;
+    // case "RStick":
+    // if (hidType == isXBox) {
+    // ButtonID = 10;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 12;
+    // } else {
+    // }
+    // break;
+    // case "DoubleSquare": // PS4 = share XBOX IS UNSURE
+    // if (hidType == isXBox) {
+    // ButtonID = 7;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 9;
+    // } else {
+    // }
+    // break;
+    // case "Options":
+    // if (hidType == isXBox) {
+    // ButtonID = 8;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 10;
+    // } else {
+    // }
+    // break;
+    // case "Xbox": // XBOX IS UNSURE
+    // if (hidType == isXBox) {
+    // } else if (hidType == isPS4) {
+    // ButtonID = 13;
+    // } else {
+    // }
+    // break;
+    // case "Touchpad": // XBOX DOES NOT EXIST (map as xbox button once found)
+    // if (hidType == isXBox) {
+    // } else if (hidType == isPS4) {
+    // ButtonID = 14;
+    // } else {
+    // }
+    // break;
+    // case "Trigger":
+    // if (hidType == isXBox) {
+    // } else if (hidType == isPS4) {
+    // } else if (hidType == isJoystick) {
+    // ButtonID = 1;
+    // } else {
+    // }
+    // break;
+    // case "RTrigger":
+    // if (hidType == isXBox) {
+    // } else if (hidType == isPS4) {
+    // ButtonID = 8;
+    // } else {
+    // }
+    // break;
+    // case "LTrigger":
+    // if (hidType == isXBox) {
+    // } else if (hidType == isPS4) {
+    // ButtonID = 7;
+    // } else {
+    // }
+    // break;
+    // case "":
+    // if (hidType == isXBox) {
+    // ButtonID = 1;
+    // } else if (hidType == isPS4) {
+    // ButtonID = 1;
+    // } else {
+    // }
+    // break;
+    // default:
+    // try {
+    // ButtonID = Integer.parseInt(ButtonName);
+    // break;
+    // } catch (NumberFormatException e) {
+    // break;
+    // }
+    // }
+    // // System.out.println("SmartMap " + ButtonName + " Port:" + ButtonID);
+    // return ButtonID;
+    // }
   }
 }

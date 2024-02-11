@@ -1,33 +1,28 @@
 package frc.robot;
 
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryPoolMXBean;
-import java.util.List;
-
 import org.photonvision.PhotonCamera;
-
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.Controllers.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
 import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
+import frc.robot.commands.DriveTrainCamCommand;
 import frc.robot.SyncedLibraries.RobotState.*;
 import frc.robot.subsystems.*;
 
 public class Robot extends TimedRobot {
   public static RobotContainer m_robotContainer;
-  public static Command AutonomousCommand;
   public static DriveTrainBase DriveTrain;
   public static Intake Intake;
   public static Shooter Shooter;
   public static Turret Turret;
-  public static PhotonCamera camera = new PhotonCamera("photonvision");
+  public static PhotonCamera camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
 
   /**
    * The current state of the robot
@@ -51,7 +46,11 @@ public class Robot extends TimedRobot {
   /** UNUSED */
   public static ControllerBase Five;
 
-  private static TeleDriveCommandBase TeleDriveCommand;
+  public static Command AutonomousCommand;
+  /** NO TOUCH, READ ONLY */
+  public static TeleDriveCommandBase TeleDriveCommand;
+  public static DriveTrainCamCommand CamCommand;
+  public static SequentialCommandGroup shootCommand;
 
   static int countgujhbgnu = 0;
 
@@ -70,6 +69,7 @@ public class Robot extends TimedRobot {
     DriveTrain.resetAll();
     DriveTrain.invertAll();
     TeleDriveCommand = new TeleDriveCommandBase(Zero, Two, Three);
+    CamCommand = new DriveTrainCamCommand();
     Intake = new Intake();
     Shooter = new Shooter();
     Turret = new Turret();
@@ -89,8 +89,12 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     System.out.println("Robot Disabled");
-    CommandScheduler.getInstance().cancel(TeleDriveCommand);
-    CommandScheduler.getInstance().cancel(AutonomousCommand);
+    if (AutonomousCommand != null) {
+      AutonomousCommand.cancel();
+    }
+    if (TeleDriveCommand != null) {
+      TeleDriveCommand.cancel();
+    }
   }
 
   @Override
@@ -123,12 +127,13 @@ public class Robot extends TimedRobot {
     }
 
     // start main driving command
-    CommandScheduler.getInstance().schedule(TeleDriveCommand);
+    // DriveTrain.setDefaultCommand(TeleDriveCommand);
+    TeleDriveCommand.schedule();
+    // CommandScheduler.getInstance().getActiveButtonLoop().clear();
   }
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putBoolean("B pressed", Zero.B.get().getAsBoolean());
   }
 
   @Override
@@ -142,7 +147,7 @@ public class Robot extends TimedRobot {
     // Home all motors and sensors
     // spin up shooter
     // turn on intake
-    Turret.home();
+    // Turret.home();
   }
 
   @Override
@@ -205,19 +210,5 @@ public class Robot extends TimedRobot {
     Three.setJoystickMultiplier(0.5);
     Four = m_controllers.Four;
     Five = m_controllers.Five;
-  }
-
-  private void logStuff() {
-
-    System.out.println(("Heap" + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage()));
-    System.out.println(("NonHeap" + ManagementFactory.getMemoryMXBean().getNonHeapMemoryUsage()));
-    List<MemoryPoolMXBean> beans = ManagementFactory.getMemoryPoolMXBeans();
-    for (MemoryPoolMXBean bean : beans) {
-      System.out.println((bean.getName() + bean.getUsage()));
-    }
-
-    for (GarbageCollectorMXBean bean : ManagementFactory.getGarbageCollectorMXBeans()) {
-      System.out.println((bean.getName() + bean.getCollectionCount() + bean.getCollectionTime()));
-    }
   }
 }

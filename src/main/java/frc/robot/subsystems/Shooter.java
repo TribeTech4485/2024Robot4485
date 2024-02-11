@@ -22,11 +22,12 @@ public class Shooter extends ManipulatorBase {
     addMotors(new CANSparkMax(DeviceConstants.shooterMotor2Id, MotorType.kBrushless),
         new CANSparkMax(DeviceConstants.shooterMotor1Id, MotorType.kBrushless));
     setSpeedMultiplier(1);
+    invertSpecificMotors(false, 1);
     setBrakeMode(false);
     SmartDashboard.putNumber("shooterP", kP);
     SmartDashboard.putNumber("shooterI", kI);
     SmartDashboard.putNumber("shooterD", kD);
-    SmartDashboard.putNumber("Shooter target", 0);
+    SmartDashboard.putNumber("Shooter target", 5000);
   }
 
   public void sedPID(double target) {
@@ -37,12 +38,18 @@ public class Shooter extends ManipulatorBase {
         tolerance);
     getSpeedCommand().setTargetSpeed(target);
     getSpeedCommand().schedule();
-    if (false) {
-      getSpeedCommand().setEndOnTarget(true).andThen(new InstantCommand(() -> fullStop()));
-    }
+    // getSpeedCommand().setEndOnTarget(true).andThen(new InstantCommand(() ->
+    // fullStop()));
   }
 
   public void adjust() {
     getSpeedCommand().setTargetSpeed(SmartDashboard.getNumber("Shooter target", 0));
+  }
+
+  @Override
+  public void periodic() {
+    SmartDashboard.putNumber("Shooter speed: ", getCurrentSpeed());
+    SmartDashboard.putNumber("Shooter power: ", getAvePower());
+    SmartDashboard.putBoolean("Shooter at speed: ", getSpeedCommand() != null ? getSpeedCommand().atSpeed : false);
   }
 }
