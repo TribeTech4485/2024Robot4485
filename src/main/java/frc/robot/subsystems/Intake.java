@@ -35,4 +35,15 @@ public class Intake extends ManipulatorBase {
     SmartDashboard.putNumber("Intake speed", getCurrentSpeed());
     SmartDashboard.putNumber("Intake target", getSpeedCommand().getTargetSpeed());
   }
+
+  @Override
+  public void home() {
+    // do nothing
+  }
+
+  @Override
+  public void ESTOP() {
+    setBrakeMode(true);
+    fullStop();
+  }
 }

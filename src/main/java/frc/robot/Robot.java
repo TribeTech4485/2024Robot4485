@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.Controllers.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
+import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 import frc.robot.commands.DriveTrainCamCommand;
 import frc.robot.SyncedLibraries.RobotState.*;
@@ -182,19 +183,21 @@ public class Robot extends TimedRobot {
     public void run(ControllerBase controller);
   }
 
+  /** ONLY FOR USE IN EMERGENCY */
   public static void KILLIT() {
     DriverStation.reportError("KILLING IT", true);
     // Professor X, add whatever your plan is to stop the robot here
-    DriveTrain.setBrakeMode(true);
-    Shooter.setBrakeMode(true);
-    Intake.setBrakeMode(true);
-    Turret.setBrakeMode(true);
-    DriveTrain.stop();
-    Shooter.stop();
-    Intake.stop();
-    Turret.stop();
 
-    DriverStation.reportError("KILLED IT, EXITING NOW", true);
+    for (ManipulatorBase subsystem : ManipulatorBase.allManipulators) {
+      DriverStation.reportWarning("ESTOP " + subsystem.getName(), false);
+      subsystem.ESTOP();
+      System.out.println("Done");
+    }
+    DriverStation.reportWarning("ESTOP DriveTrain", false);
+    DriveTrain.ESTOP();
+    System.out.println("Done");
+
+    DriverStation.reportError("KILLED IT, EXITING NOW", false);
     System.exit(0);
   }
 

@@ -52,4 +52,15 @@ public class Shooter extends ManipulatorBase {
     SmartDashboard.putNumber("Shooter power: ", getAvePower());
     SmartDashboard.putBoolean("Shooter at speed: ", getSpeedCommand() != null ? getSpeedCommand().atSpeed : false);
   }
+
+  @Override
+  public void home() {
+    // do nothing
+  }
+
+  @Override
+  public void ESTOP() {
+    setBrakeMode(true);
+    fullStop();
+  }
 }

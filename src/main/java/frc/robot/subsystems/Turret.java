@@ -35,4 +35,15 @@ public class Turret extends ManipulatorBase {
     SmartDashboard.putNumber("Turret position", getPosition());
     SmartDashboard.putNumber("Turret target", getMoveCommand().getTargetPosition());
   }
+
+  @Override
+  public void home() {
+    System.out.println("Turret NEEDS HOMED!");
+  }
+
+  @Override
+  public void ESTOP() {
+    setBrakeMode(true);
+    fullStop();
+  }
 }

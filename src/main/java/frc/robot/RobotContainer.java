@@ -18,9 +18,6 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
-    // CommandScheduler.getInstance().getActiveButtonLoop().clear();
-    // CommandScheduler.getInstance().getDefaultButtonLoop().clear();
-
     Robot.doOnAllControllers(
         (controller) -> {
           controller.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
