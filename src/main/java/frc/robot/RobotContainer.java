@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import frc.robot.commands.DriveTrainCamCommand;
 
 public class RobotContainer {
   public RobotContainer() {
@@ -18,6 +19,11 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
+
+    Robot.Zero.PovRight.get().onTrue(new InstantCommand(() -> Robot.Intake.setPower(-1, false)));
+    Robot.Zero.PovLeft.get().onTrue(new InstantCommand(() -> Robot.Intake.setPower(1, false)));
+    Robot.Zero.PovDown.get().onTrue(new InstantCommand(() -> Robot.Intake.setPower(0, false)));
+
     Robot.doOnAllControllers(
         (controller) -> {
           controller.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
@@ -38,33 +44,36 @@ public class RobotContainer {
           Robot.TeleDriveCommand.schedule();
         }));
 
+    Robot.Zero.RightTrigger.get().onTrue(new InstantCommand(() -> Robot.CamCommand.execute()));
+
     // Auto aim and shoot, end on button release
     Robot.Zero.RightBumper.get().whileTrue(new StartEndCommand(
         () -> {
-          Robot.TeleDriveCommand.cancel();
+          Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand);
           Robot.shootCommand = new SequentialCommandGroup(
               // turn towards target
               Robot.CamCommand,
-              // spin up shooter
-              new InstantCommand(() -> Robot.Shooter.sedPID(
-                  SmartDashboard.getNumber("Shooter target", 0))),
-              // wait for shooter to spin up
-              Robot.Shooter.getSpeedCommand()
-                  .setEndOnTarget(true),
-              // TODO: release the note for 2 seconds
+
+              // spin up shooter and wait
+              Robot.Shooter.shootCommand().setEndOnTarget(true),
+
+              // TODO: release the note for 2 seconds below
               new RepeatCommand(new InstantCommand(() -> System.out.println("TODO: turn on belt drive")))
                   .withTimeout(2),
+
               // stop shooter
               new InstantCommand(() -> Robot.Shooter.stopCommands()),
-              // TODO: turn off belt drive
+
+              // TODO: turn off belt drive below
               new InstantCommand(() -> System.out.println("TODO: turn off belt drive")),
+
               // return to teleop
               Robot.TeleDriveCommand);
           Robot.shootCommand.schedule();
         },
 
         () -> {
-          // "unschedule" all commands
+          // "unschedule" all commands if canceled
           CommandScheduler.getInstance().removeComposedCommand(Robot.TeleDriveCommand);
           CommandScheduler.getInstance().removeComposedCommand(Robot.CamCommand);
           CommandScheduler.getInstance().removeComposedCommand(Robot.Shooter.getSpeedCommand());
@@ -75,11 +84,13 @@ public class RobotContainer {
         }));
 
     // sudo kill -f *
+    // all front buttons and and at least one stick press
     Robot.doOnAllControllers(
         (controller) -> controller.LeftBumper.get()
             .and(controller.LeftTrigger.get())
             .and(controller.RightBumper.get())
             .and(controller.RightTrigger.get())
+            .and(controller.LeftStickPress.get().or(controller.RightStickPress.get()))
             .onTrue(new InstantCommand(() -> Robot.KILLIT())));
   }
 }

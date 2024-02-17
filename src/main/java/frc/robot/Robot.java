@@ -12,6 +12,7 @@ import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.Controllers.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
+import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
 import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 import frc.robot.commands.DriveTrainCamCommand;
 import frc.robot.SyncedLibraries.RobotState.*;
@@ -23,7 +24,7 @@ public class Robot extends TimedRobot {
   public static Intake Intake;
   public static Shooter Shooter;
   public static Turret Turret;
-  public static PhotonCamera camera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
+  public static PhotonVisionBase PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
 
   /**
    * The current state of the robot
@@ -53,8 +54,6 @@ public class Robot extends TimedRobot {
   public static DriveTrainCamCommand CamCommand;
   public static SequentialCommandGroup shootCommand;
 
-  static int countgujhbgnu = 0;
-
   @Override
   public void robotInit() {
     System.out.println("Robot Initializing");
@@ -70,21 +69,15 @@ public class Robot extends TimedRobot {
     DriveTrain.resetAll();
     DriveTrain.invertAll();
     TeleDriveCommand = new TeleDriveCommandBase(Zero, Two, Three);
-    CamCommand = new DriveTrainCamCommand();
+    CamCommand = new DriveTrainCamCommand(TeleDriveCommand);
     Intake = new Intake();
     Shooter = new Shooter();
     Turret = new Turret();
-    camera.setPipelineIndex(0);
-    camera.setDriverMode(false);
   }
 
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("Shooter speed:", Intake.getAvePower());
-    if (countgujhbgnu++ % 50 == 0) {
-      // logStuff();
-    }
   }
 
   @Override

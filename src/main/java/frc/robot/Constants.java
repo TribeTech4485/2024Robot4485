@@ -37,7 +37,7 @@ public final class Constants {
    */
   public static final class DeviceConstants {
     public static final int PCMId = 6;
-    public static final int intakeMotorId = 9;
+    public static final int intakeMotorId = 6;
     public static final int shooterMotor1Id = 7;
     public static final int shooterMotor2Id = 5;
     public static final int turretMotorId = 10;
@@ -52,6 +52,7 @@ public final class Constants {
     public static final double shooterSpeedKI = 0.0005;
     public static final double shooterSpeedKD = 0;
     public static final double shooterSpeedTolerance = 25;
+    public static final int shooterDefaultSpeed = 5000;
 
     public static final double turretPositionKP = 0;
     public static final double turretPositionKI = 0;
