@@ -23,7 +23,7 @@ public class DriveTrainCamCommand extends Command {
   double gyroOffset = 0;
   /** Hopefully not necessary */
   final double camAngleMultiplier = 1;
-  final double maxSpeed = 0.05;
+  final double maxSpeed = 0.25;
   Command driveCommand;
   boolean hasEverSeenTarget = false;
 
@@ -49,18 +49,8 @@ public class DriveTrainCamCommand extends Command {
   public void execute() {
     double angle = 0;
     double currGyro = -gyro.getAngle();
-    // PhotonTrackedTarget mainTarget = photon.mainTarget;
     if (hasEverSeenTarget) {
       if (photon.hasTarget) {
-        // if (mainTarget.getFiducialId() == 3 || mainTarget.getFiducialId() == 8) {
-          // for (int i = 0; i < photon.targets.size(); i++) {
-            // int target = photon.targets.get(i).getFiducialId();
-            // if (target != 3 && target != 8) {
-              // mainTarget = photon.targets.get(i);
-              // break;
-            // }
-          // }
-        // }
         angle = photon.targetXYAngles[0] * camAngleMultiplier;
         gyroOffset = currGyro - angle;
         SmartDashboard.putNumber("LastSeen at", angle);
@@ -72,6 +62,8 @@ public class DriveTrainCamCommand extends Command {
       driveCommand.cancel();
       execute();
       return;
+      // its easier to just restart the command
+      // than to redo the logic
     } else {
       angle = 0;
     }

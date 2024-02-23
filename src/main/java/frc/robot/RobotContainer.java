@@ -4,10 +4,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.commands.DriveTrainCamCommand;
+import frc.robot.commands.FullShootCameraCommands;
 
 public class RobotContainer {
   public RobotContainer() {
@@ -50,25 +53,7 @@ public class RobotContainer {
     Robot.Zero.RightBumper.get().whileTrue(new StartEndCommand(
         () -> {
           Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand);
-          Robot.shootCommand = new SequentialCommandGroup(
-              // turn towards target
-              Robot.CamCommand,
-
-              // spin up shooter and wait
-              Robot.Shooter.shootCommand().setEndOnTarget(true),
-
-              // TODO: release the note for 2 seconds below
-              new RepeatCommand(new InstantCommand(() -> System.out.println("TODO: turn on belt drive")))
-                  .withTimeout(2),
-
-              // stop shooter
-              new InstantCommand(() -> Robot.Shooter.stopCommands()),
-
-              // TODO: turn off belt drive below
-              new InstantCommand(() -> System.out.println("TODO: turn off belt drive")),
-
-              // return to teleop
-              Robot.TeleDriveCommand);
+          Robot.shootCommand = new FullShootCameraCommands();
           Robot.shootCommand.schedule();
         },
 

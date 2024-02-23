@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.Controllers.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
@@ -15,6 +14,7 @@ import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
 import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 import frc.robot.commands.DriveTrainCamCommand;
+import frc.robot.commands.FullShootCameraCommands;
 import frc.robot.SyncedLibraries.RobotState.*;
 import frc.robot.subsystems.*;
 
@@ -26,33 +26,21 @@ public class Robot extends TimedRobot {
   public static Turret Turret;
   public static PhotonVisionBase PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
 
-  /**
-   * The current state of the robot
-   * <p>
-   * KEEP UPDATED
-   */
+  public static Command AutonomousCommand;
+  public static TeleDriveCommandBase TeleDriveCommand;
+  public static DriveTrainCamCommand CamCommand;
+  public static FullShootCameraCommands shootCommand;
+
   public static RobotStateEnum robotState = RobotStateEnum.Disabled;
   public static ManipulatorStateEnum manipulatorState = ManipulatorStateEnum.Empty;
 
   private static Controllers m_controllers;
-  /** Driver */
   public static ControllerBase Zero;
-  /** Copiolot */
   public static ControllerBase One;
-  /** One-man show */
   public static ControllerBase Two;
-  /** Guest controller */
   public static ControllerBase Three;
-  /** UNUSED */
   public static ControllerBase Four;
-  /** UNUSED */
   public static ControllerBase Five;
-
-  public static Command AutonomousCommand;
-  /** NO TOUCH, READ ONLY */
-  public static TeleDriveCommandBase TeleDriveCommand;
-  public static DriveTrainCamCommand CamCommand;
-  public static SequentialCommandGroup shootCommand;
 
   @Override
   public void robotInit() {
