@@ -4,10 +4,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.commands.DriveTrainCamCommand;
 import frc.robot.commands.FullShootCameraCommands;
@@ -50,23 +46,26 @@ public class RobotContainer {
     Robot.Zero.RightTrigger.get().onTrue(new InstantCommand(() -> Robot.CamCommand.execute()));
 
     // Auto aim and shoot, end on button release
-    Robot.Zero.RightBumper.get().whileTrue(new StartEndCommand(
-        () -> {
-          Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand);
-          Robot.shootCommand = new FullShootCameraCommands();
-          Robot.shootCommand.schedule();
-        },
+    Robot.Zero.RightBumper.get().and(() -> !Robot.Zero.isJoysticksBeingTouched())
+        .whileTrue(new StartEndCommand(
+            () -> {
+              Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand);
+              Robot.shootCommand = new FullShootCameraCommands();
+              Robot.shootCommand.schedule();
+            },
 
-        () -> {
-          // "unschedule" all commands if canceled
-          CommandScheduler.getInstance().removeComposedCommand(Robot.TeleDriveCommand);
-          CommandScheduler.getInstance().removeComposedCommand(Robot.CamCommand);
-          CommandScheduler.getInstance().removeComposedCommand(Robot.Shooter.getSpeedCommand());
-          Robot.shootCommand.cancel();
-          Robot.CamCommand.cancel();
-          Robot.Shooter.stopCommands();
-          Robot.TeleDriveCommand.schedule();
-        }));
+            () -> {
+              // "unschedule" all commands if canceled
+              CommandScheduler.getInstance().removeComposedCommand(Robot.TeleDriveCommand);
+              CommandScheduler.getInstance().removeComposedCommand(Robot.CamCommand);
+              CommandScheduler.getInstance().removeComposedCommand(Robot.Shooter.getSpeedCommand());
+              CommandScheduler.getInstance().removeComposedCommand(Robot.shootCommand);
+              CommandScheduler.getInstance().removeComposedCommand(Robot.Turret.getMoveCommand());
+              Robot.shootCommand.cancel();
+              Robot.CamCommand.cancel();
+              Robot.Shooter.stopCommands();
+              Robot.TeleDriveCommand.schedule();
+            }));
 
     // sudo kill -f *
     // all front buttons and and at least one stick press

@@ -18,8 +18,7 @@ public class FullShootCameraCommands extends SequentialCommandGroup {
         // turn towards target
         new ParallelCommandGroup(
             Robot.CamCommand,
-            // TODO: turn turret
-            new InstantCommand(() -> System.out.println("TODO: turn turret to target"))),
+            new TurretCamRotateCommand()),
 
         // spin up shooter and wait
         Robot.Shooter.shootCommand().setEndOnTarget(true),
