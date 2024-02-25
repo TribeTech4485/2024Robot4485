@@ -13,6 +13,7 @@ import frc.robot.subsystems.Turret;
 public class TurretCamRotateCommand extends Command {
   Turret turret = Robot.Turret;
   ManipulatorMoveCommand moveCommand;
+  int staticAngle = 0;
 
   public TurretCamRotateCommand() {
     addRequirements(Robot.Turret);

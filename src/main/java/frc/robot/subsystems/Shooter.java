@@ -4,6 +4,10 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.DeviceConstants;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorSpeedCommand;
@@ -18,8 +22,8 @@ public class Shooter extends ManipulatorBase {
   public Shooter() {
     addMotors(new CANSparkMax(DeviceConstants.shooterMotor2Id, MotorType.kBrushless),
         new CANSparkMax(DeviceConstants.shooterMotor1Id, MotorType.kBrushless));
-    setSpeedMultiplier(1);
-    invertSpecificMotors(false, 1);
+    // setSpeedMultiplier(1);
+    invertSpecificMotors(true, 1);
     setBrakeMode(false);
     SmartDashboard.putNumber("Shooter target", defaultSpeed);
   }
@@ -60,13 +64,21 @@ public class Shooter extends ManipulatorBase {
   }
 
   @Override
-  public void home() {
-    // do nothing
-  }
-
-  @Override
   public void ESTOP() {
     setBrakeMode(true);
     fullStop();
+  }
+
+  @Override
+  public Command test() {
+    setSpeedPID(kP, kI, kD, tolerance);
+    return new SequentialCommandGroup(
+      shootCommand().setEndOnTarget(true),
+      new InstantCommand(() -> System.out.println("Shoot")),
+      new WaitCommand(1),
+      new InstantCommand(() -> System.out.println("stop")),
+      new InstantCommand(() -> fullStop()),
+      new InstantCommand(() -> System.out.println("stoped"))
+    );
   }
 }

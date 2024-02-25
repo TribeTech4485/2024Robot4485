@@ -18,10 +18,18 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
+    Robot.Zero.PovUpLeft.get().onTrue(new InstantCommand(() -> {
+      Robot.Conveyor.setPower(-0.25);
+      Robot.Intake.sendIt(-8000);
+    }));
+    Robot.Zero.PovUpRight.get().onTrue(new InstantCommand(() -> {
+      Robot.Conveyor.fullStop();
+      Robot.Intake.fullStop();
+    }));
 
-    Robot.Zero.PovRight.get().onTrue(new InstantCommand(() -> Robot.Intake.setPower(-1, false)));
-    Robot.Zero.PovLeft.get().onTrue(new InstantCommand(() -> Robot.Intake.setPower(1, false)));
-    Robot.Zero.PovDown.get().onTrue(new InstantCommand(() -> Robot.Intake.setPower(0, false)));
+    Robot.Zero.PovLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.moveToPosition(Robot.Turret.getPosition())));
+    Robot.Zero.PovDownLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.adjustTargetPos(-5)));
+    Robot.Zero.PovDownLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.adjustTargetPos(5)));
 
     Robot.doOnAllControllers(
         (controller) -> {
@@ -29,7 +37,7 @@ public class RobotContainer {
               SmartDashboard.getNumber("Shooter target", 0))));
           controller.B.get().onTrue(new InstantCommand(() -> Robot.Shooter.stopCommands()));
           controller.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(0)));
-          controller.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.adjust()));
+          controller.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(-2000)));
         });
 
     // Auto aim, end on button release

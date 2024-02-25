@@ -40,12 +40,13 @@ public final class Constants {
     public static final int intakeMotorId = 6;
     public static final int shooterMotor1Id = 7;
     public static final int shooterMotor2Id = 5;
-    public static final int turretMotorId = 10;
+    public static final int turretMotorId = 9;
+    public static final int conveyorMotorId = 8;
     public static final int LightPWM = 0;
 
     public static final double intakeSpeedKP = 0.00001;
     public static final double intakeSpeedKI = 0.00075;
-    public static final double intakeSpeedKD = 0.000001;
+    public static final double intakeSpeedKD = 0.00000;
     public static final double intakeSpeedTolerance = 0;
 
     public static final double shooterSpeedKP = 0.00005;
@@ -58,7 +59,10 @@ public final class Constants {
     public static final double turretPositionKI = 0;
     public static final double turretPositionKD = 0;
     public static final double turretPositionTolerance = 0;
-    public static final double turretPositionMultiplier = 50;
+    public static final double turretPositionMultiplier = 36000;
+
+    public static final double conveyorProximity = 100;
+    public static final double conveyorPower = 1;
   }
 
   public static final class WiringConstants {

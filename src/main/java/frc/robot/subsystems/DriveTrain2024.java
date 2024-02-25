@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
 
-public class DriveTrainNew extends DriveTrainBase {
+public class DriveTrain2024 extends DriveTrainBase {
   private final static CANSparkMax[] leftDriveMotorsInput = new CANSparkMax[] {
       new CANSparkMax(1, CANSparkMax.MotorType.kBrushless),
       new CANSparkMax(2, CANSparkMax.MotorType.kBrushless) };
@@ -15,7 +15,7 @@ public class DriveTrainNew extends DriveTrainBase {
       new CANSparkMax(3, CANSparkMax.MotorType.kBrushless),
       new CANSparkMax(4, CANSparkMax.MotorType.kBrushless) };
 
-  public DriveTrainNew() {
+  public DriveTrain2024() {
     super(leftDriveMotorsInput, rightDriveMotorsInput, PneumaticsModuleType.CTREPCM,
         new int[] {}, false,
         DriveConstants.drivingMax, DriveConstants.driveAmpsMax, DriveConstants.drivingRamp,

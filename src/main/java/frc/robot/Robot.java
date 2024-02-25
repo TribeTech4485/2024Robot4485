@@ -1,29 +1,33 @@
 package frc.robot;
 
+import java.util.LinkedList;
+
 import org.photonvision.PhotonCamera;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.Controllers.ControllerBase;
-import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
-import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
-import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
-import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
-import frc.robot.commands.DriveTrainCamCommand;
-import frc.robot.commands.FullShootCameraCommands;
-import frc.robot.SyncedLibraries.RobotState.*;
+import frc.robot.SyncedLibraries.SystemBases.*;
+import frc.robot.commands.*;
 import frc.robot.subsystems.*;
+import frc.robot.SyncedLibraries.RobotState.*;
 
 public class Robot extends TimedRobot {
-  public static RobotContainer m_robotContainer;
+  public static RobotContainer RobotContainer;
   public static DriveTrainBase DriveTrain;
   public static Intake Intake;
   public static Shooter Shooter;
   public static Turret Turret;
-  public static PhotonVisionBase PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
+  public static Conveyor Conveyor;
+  public static PhotonVisionBase PhotonVision;
+  public static PowerDistribution PDP;
 
   public static Command AutonomousCommand;
   public static TeleDriveCommandBase TeleDriveCommand;
@@ -50,16 +54,20 @@ public class Robot extends TimedRobot {
     DriverStation.silenceJoystickConnectionWarning(true);
     UpdateControllers();
 
-    m_robotContainer = new RobotContainer();
-    AutonomousCommand = m_robotContainer.getAutonomousCommand();
-    DriveTrain = new DriveTrainNew();
+    RobotContainer = new RobotContainer();
+    AutonomousCommand = RobotContainer.getAutonomousCommand();
+    DriveTrain = new DriveTrain2024();
     DriveTrain.resetAll();
     DriveTrain.invertAll();
     TeleDriveCommand = new TeleDriveCommandBase(Zero, Two, Three);
+    PDP = new PowerDistribution(20, ModuleType.kRev);
     CamCommand = new DriveTrainCamCommand(TeleDriveCommand);
     Intake = new Intake();
+    // Intake.setInverted(true);
     Shooter = new Shooter();
     Turret = new Turret();
+    Conveyor = new Conveyor();
+    PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
   }
 
   @Override
@@ -87,7 +95,7 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     System.out.println("Robot in Autonomous Mode");
 
-    AutonomousCommand = m_robotContainer.getAutonomousCommand();
+    AutonomousCommand = RobotContainer.getAutonomousCommand();
     if (AutonomousCommand != null) {
       AutonomousCommand.schedule();
     }
@@ -123,12 +131,26 @@ public class Robot extends TimedRobot {
 
     CommandScheduler.getInstance().cancelAll();
     m_controllers.fullUpdate();
-    m_robotContainer.configureBindings();
+    RobotContainer.configureBindings();
     Robot.DriveTrain.resetAll();
     // Home all motors and sensors
     // spin up shooter
     // turn on intake
     // Turret.home();
+
+    Command[] testCommands = new Command[ManipulatorBase.allManipulators.size()];
+    for (int i = 0; i < ManipulatorBase.allManipulators.size(); i++) {
+      final int b = i;
+      ManipulatorBase subsystem = ManipulatorBase.allManipulators.get(i);
+      System.out.println("Adding " + subsystem.getName());
+      testCommands[i] = new SequentialCommandGroup(
+          new InstantCommand(
+              () -> DriverStation.reportWarning("Testing " +
+                  subsystem.getName(), false)),
+          subsystem.home(),
+          subsystem.test());
+    }
+    new SequentialCommandGroup(testCommands).schedule();
   }
 
   @Override
