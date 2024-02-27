@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.util.LinkedList;
-
 import org.photonvision.PhotonCamera;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -59,7 +57,7 @@ public class Robot extends TimedRobot {
     DriveTrain = new DriveTrain2024();
     DriveTrain.resetAll();
     DriveTrain.invertAll();
-    TeleDriveCommand = new TeleDriveCommandBase(Zero, Two, Three);
+    TeleDriveCommand = new TeleDriveCommand2024(Zero, Two, Three);
     PDP = new PowerDistribution(20, ModuleType.kRev);
     CamCommand = new DriveTrainCamCommand(TeleDriveCommand);
     Intake = new Intake();
@@ -140,7 +138,6 @@ public class Robot extends TimedRobot {
 
     Command[] testCommands = new Command[ManipulatorBase.allManipulators.size()];
     for (int i = 0; i < ManipulatorBase.allManipulators.size(); i++) {
-      final int b = i;
       ManipulatorBase subsystem = ManipulatorBase.allManipulators.get(i);
       System.out.println("Adding " + subsystem.getName());
       testCommands[i] = new SequentialCommandGroup(
@@ -180,21 +177,49 @@ public class Robot extends TimedRobot {
     r.run(Five);
   }
 
+  public static void doOnControllers(ControllerRunnable r, int... controllers) {
+    for (int i : controllers) {
+      switch (i) {
+        case 0:
+          r.run(Zero);
+          break;
+        case 1:
+          r.run(One);
+          break;
+        case 2:
+          r.run(Two);
+          break;
+        case 3:
+          r.run(Three);
+          break;
+        case 4:
+          r.run(Four);
+          break;
+        case 5:
+          r.run(Five);
+          break;
+      }
+    }
+  }
+
   /** Ignore this thing */
   public static interface ControllerRunnable {
     public void run(ControllerBase controller);
   }
 
-  /** ONLY FOR USE IN EMERGENCY */
+  /**
+   * <b>ONLY FOR USE IN EMERGENCY</b>
+   * <p>
+   * YES, ACTUALLY
+   */
   public static void KILLIT() {
     DriverStation.reportError("KILLING IT", true);
-    // Professor X, add whatever your plan is to stop the robot here
-
-    for (ManipulatorBase subsystem : ManipulatorBase.allManipulators) {
-      DriverStation.reportWarning("ESTOP " + subsystem.getName(), false);
-      subsystem.ESTOP();
+    for (ManipulatorBase manipulator : ManipulatorBase.allManipulators) {
+      DriverStation.reportWarning("ESTOP " + manipulator.getName(), false);
+      manipulator.ESTOP();
       System.out.println("Done");
     }
+
     DriverStation.reportWarning("ESTOP DriveTrain", false);
     DriveTrain.ESTOP();
     System.out.println("Done");

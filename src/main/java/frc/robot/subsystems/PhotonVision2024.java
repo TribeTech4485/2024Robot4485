@@ -27,6 +27,7 @@ public class PhotonVision2024 extends PhotonVisionBase {
             // if middle speaker is available
             x = tempTarget.getYaw();
             y = tempTarget.getPitch();
+            targetDistance = tempTarget.getBestCameraToTarget().getTranslation().getX();
           } else {
             /*
              * apply generic offset for centering
@@ -35,10 +36,12 @@ public class PhotonVision2024 extends PhotonVisionBase {
              */
             x = mainTarget.getYaw() - 4;
             y = mainTarget.getPitch();
+            targetDistance = mainTarget.getBestCameraToTarget().getTranslation().getX();
           }
         } else {
           x = mainTarget.getYaw();
           y = mainTarget.getPitch();
+          targetDistance = mainTarget.getBestCameraToTarget().getTranslation().getX();
         }
 
         targetXYAngles[0] = x;
@@ -46,6 +49,7 @@ public class PhotonVision2024 extends PhotonVisionBase {
 
         SmartDashboard.putNumber("TargetX", x);
         SmartDashboard.putNumber("TargetY", y);
+        SmartDashboard.putNumber("Target dist", targetDistance);
       }
     }
   }

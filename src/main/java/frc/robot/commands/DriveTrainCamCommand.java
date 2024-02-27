@@ -1,7 +1,5 @@
 package frc.robot.commands;
 
-import org.photonvision.targeting.PhotonTrackedTarget;
-
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;

@@ -34,7 +34,7 @@ public class TurretCamRotateCommand extends Command {
   @Override
   public void execute() {
     moveCommand.setTargetPosition(Robot.PhotonVision.targetXYAngles[1] +
-        0 // TODO: trig to find turret angle to target
+        Math.atan2(0.69, Robot.PhotonVision.targetDistance)
     );
   }
 

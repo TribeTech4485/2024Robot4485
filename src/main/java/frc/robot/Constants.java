@@ -59,7 +59,8 @@ public final class Constants {
     public static final double turretPositionKI = 0;
     public static final double turretPositionKD = 0;
     public static final double turretPositionTolerance = 0;
-    public static final double turretPositionMultiplier = 36000;
+    public static final int turretPositionMultiplier = 36000;
+    public static final double turretMaxPower = 0.5;
 
     public static final double conveyorProximity = 100;
     public static final double conveyorPower = 1;

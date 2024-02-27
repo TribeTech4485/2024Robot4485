@@ -20,7 +20,7 @@ public class DriveTrain2024 extends DriveTrainBase {
         new int[] {}, false,
         DriveConstants.drivingMax, DriveConstants.driveAmpsMax, DriveConstants.drivingRamp,
         DriveConstants.WHEEL_DIAMETER, DriveConstants.PULSES_PER_REVOLUTION, true);
-    invertAll();
+    // invertAll();
   }
 
   @Override

@@ -76,13 +76,15 @@ public class RobotContainer {
             }));
 
     // sudo kill -f *
-    // all front buttons and and at least one stick press
+    // all front buttons and and both stick press
     Robot.doOnAllControllers(
         (controller) -> controller.LeftBumper.get()
             .and(controller.LeftTrigger.get())
+            .and(controller.LeftBumper.get())
             .and(controller.RightBumper.get())
             .and(controller.RightTrigger.get())
-            .and(controller.LeftStickPress.get().or(controller.RightStickPress.get()))
+            .and(controller.LeftStickPress.get())
+            .and(controller.RightStickPress.get())
             .onTrue(new InstantCommand(() -> Robot.KILLIT())));
   }
 }

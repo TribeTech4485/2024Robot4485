@@ -1,8 +1,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkAbsoluteEncoder.Type;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -28,6 +26,7 @@ public class Turret extends ManipulatorBase {
     setPositionMultiplier(DeviceConstants.turretPositionMultiplier);
     setBrakeMode(true);
     setPositionPID();
+    setMaxPower(DeviceConstants.turretMaxPower);
   }
 
   public void sendIt(int angle) {
