@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -26,6 +27,7 @@ public class Robot extends TimedRobot {
   public static Conveyor Conveyor;
   public static PhotonVisionBase PhotonVision;
   public static PowerDistribution PDP;
+  public static LedBase LED;
 
   public static Command AutonomousCommand;
   public static TeleDriveCommandBase TeleDriveCommand;
@@ -66,6 +68,8 @@ public class Robot extends TimedRobot {
     Turret = new Turret();
     Conveyor = new Conveyor();
     PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
+    LED = new LedBase(0, 5, 60);
+    LED.sections[0].addColor(Color.kBlue).doSolid();
   }
 
   @Override
