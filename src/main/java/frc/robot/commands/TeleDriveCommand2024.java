@@ -18,6 +18,6 @@ public class TeleDriveCommand2024 extends TeleDriveCommandBase {
   @Override
   public void execute() {
     super.execute();
-    Robot.Turret.setPower(ys[2], false);
+    Robot.Turret.setPower(ys[2] / 1, false);
   }
 }

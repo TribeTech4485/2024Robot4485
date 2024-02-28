@@ -31,10 +31,4 @@ public class DriveTrain2024 extends DriveTrainBase {
     resetGyro();
     doSlowMode(false);
   }
-
-  @Override
-  public void periodic() {
-    SmartDashboard.putNumber("Left Drive Speed", getLeftSpeed());
-    SmartDashboard.putNumber("Right Drive Speed", getRightSpeed());
-  }
 }

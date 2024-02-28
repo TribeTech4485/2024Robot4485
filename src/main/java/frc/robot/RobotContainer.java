@@ -27,6 +27,8 @@ public class RobotContainer {
       Robot.Intake.fullStop();
     }));
 
+    Robot.Zero.PovDown.get().onTrue(new InstantCommand(() -> Robot.Conveyor.setPower(1)));
+
     Robot.Zero.PovLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.moveToPosition(Robot.Turret.getPosition())));
     Robot.Zero.PovDownLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.adjustTargetPos(-5)));
     Robot.Zero.PovDownLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.adjustTargetPos(5)));
@@ -36,7 +38,7 @@ public class RobotContainer {
           controller.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
               SmartDashboard.getNumber("Shooter target", 0))));
           controller.B.get().onTrue(new InstantCommand(() -> Robot.Shooter.stopCommands()));
-          controller.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(0)));
+          controller.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(2000)));
           controller.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(-2000)));
         });
 

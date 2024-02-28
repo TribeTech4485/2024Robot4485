@@ -69,8 +69,8 @@ public class Robot extends TimedRobot {
     Conveyor = new Conveyor();
     PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
     LED = new LedBase(0, 20, 20, 20);
-    LED.sections[0].init(1, 2, Color.kRed, new Color(0, 255, 0), Color.kBlue).doMoveForward();
-    LED.sections[1].init(2, 1).doOff();
+    LED.sections[0].init(1, 2, Color.kRed, new Color(0, 255, 0), Color.kBlue).doMoveForward();;
+    LED.sections[1].init(1, 1).doOff();
     LED.sections[2].init(3, 1, Color.kRed, new Color(0, 255, 0), Color.kBlue).doMoveBackward();
   }
 
