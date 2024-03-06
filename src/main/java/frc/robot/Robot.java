@@ -57,8 +57,8 @@ public class Robot extends TimedRobot {
     RobotContainer = new RobotContainer();
     AutonomousCommand = RobotContainer.getAutonomousCommand();
     DriveTrain = new DriveTrain2024();
-    DriveTrain.resetAll();
-    DriveTrain.invertAll();
+    // DriveTrain.resetAll();
+    // DriveTrain.invertAll();
     TeleDriveCommand = new TeleDriveCommand2024(Zero, Two, Three);
     PDP = new PowerDistribution(20, ModuleType.kRev);
     CamCommand = new DriveTrainCamCommand(TeleDriveCommand);
@@ -87,6 +87,10 @@ public class Robot extends TimedRobot {
     }
     if (TeleDriveCommand != null) {
       TeleDriveCommand.cancel();
+    }
+
+    if (DriverStation.isEStopped()) {
+      KILLIT();
     }
   }
 

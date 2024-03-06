@@ -18,75 +18,88 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
-    Robot.Zero.PovUpLeft.get().onTrue(new InstantCommand(() -> {
-      Robot.Conveyor.setPower(-0.25);
-      Robot.Intake.sendIt(-8000);
-    }));
-    Robot.Zero.PovUpRight.get().onTrue(new InstantCommand(() -> {
-      Robot.Conveyor.fullStop();
-      Robot.Intake.fullStop();
-    }));
+    boolean competitonMode = false;
+    if (competitonMode) {
+      Robot.Zero.LeftBumper.get().or(Robot.Zero.RightBumper.get())
+          .onTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(true)))
+          .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
 
-    Robot.Zero.PovDown.get().onTrue(new InstantCommand(() -> Robot.Conveyor.setPower(1)));
+      Robot.One.LeftBumper.get().onTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(true)))
+          .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
 
-    Robot.Zero.PovLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.moveToPosition(Robot.Turret.getPosition())));
-    Robot.Zero.PovDownLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.adjustTargetPos(-5)));
-    Robot.Zero.PovDownLeft.get().onTrue(new InstantCommand(() -> Robot.Turret.adjustTargetPos(5)));
+    } else {
+      Robot.Zero.PovUp.get().onTrue(new InstantCommand(() -> {
+        Robot.Conveyor.setPower(-1);
+        Robot.Intake.sendIt(-8000);
+      }));
+      Robot.Zero.PovDown.get().onTrue(new InstantCommand(() -> {
+        Robot.Conveyor.fullStop();
+        Robot.Intake.fullStop();
+      }));
 
-    Robot.doOnAllControllers(
-        (controller) -> {
-          controller.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
-              SmartDashboard.getNumber("Shooter target", 0))));
-          controller.B.get().onTrue(new InstantCommand(() -> Robot.Shooter.stopCommands()));
-          controller.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(2000)));
-          controller.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(-2000)));
-        });
+      // Robot.Zero.PovDown.get().onTrue(new InstantCommand(() ->
+      // Robot.Conveyor.setPower(1)));
 
-    // Auto aim, end on button release
-    Robot.Zero.LeftBumper.get().whileTrue(new StartEndCommand(
-        () -> {
-          Robot.TeleDriveCommand.cancel();
-          Robot.CamCommand.schedule();
-        },
-        () -> {
-          Robot.CamCommand.cancel();
-          Robot.TeleDriveCommand.schedule();
-        }));
+      Robot.Zero.PovLeft.get()
+          .onTrue(new InstantCommand(() -> Robot.Turret.moveToPosition(Robot.Turret.getPosition())));
+      Robot.Zero.LeftStickPress.get().onTrue(new InstantCommand(() -> Robot.Turret.adjustTargetPos(-5)));
+      Robot.Zero.RightStickPress.get().onTrue(new InstantCommand(() -> Robot.Turret.adjustTargetPos(5)));
 
-    Robot.Zero.RightTrigger.get().onTrue(new InstantCommand(() -> Robot.CamCommand.execute()));
+      Robot.doOnAllControllers(
+          (controller) -> {
+            controller.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
+                SmartDashboard.getNumber("Shooter target", 0))));
+            controller.B.get().onTrue(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+            controller.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(2000)));
+            controller.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(-2000)));
+          });
 
-    // Auto aim and shoot, end on button release
-    Robot.Zero.RightBumper.get().and(() -> !Robot.Zero.isJoysticksBeingTouched())
-        .whileTrue(new StartEndCommand(
-            () -> {
-              Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand);
-              Robot.shootCommand = new FullShootCameraCommands();
-              Robot.shootCommand.schedule();
-            },
+      // Auto aim, end on button release
+      Robot.Zero.LeftBumper.get().whileTrue(new StartEndCommand(
+          () -> {
+            Robot.TeleDriveCommand.cancel();
+            Robot.CamCommand.schedule();
+          },
+          () -> {
+            Robot.CamCommand.cancel();
+            Robot.TeleDriveCommand.schedule();
+          }));
 
-            () -> {
-              // "unschedule" all commands if canceled
-              CommandScheduler.getInstance().removeComposedCommand(Robot.TeleDriveCommand);
-              CommandScheduler.getInstance().removeComposedCommand(Robot.CamCommand);
-              CommandScheduler.getInstance().removeComposedCommand(Robot.Shooter.getSpeedCommand());
-              CommandScheduler.getInstance().removeComposedCommand(Robot.shootCommand);
-              CommandScheduler.getInstance().removeComposedCommand(Robot.Turret.getMoveCommand());
-              Robot.shootCommand.cancel();
-              Robot.CamCommand.cancel();
-              Robot.Shooter.stopCommands();
-              Robot.TeleDriveCommand.schedule();
-            }));
+      Robot.Zero.RightTrigger.get().onTrue(new InstantCommand(() -> Robot.CamCommand.execute()));
 
-    // sudo kill -f *
-    // all front buttons and and both stick press
-    Robot.doOnAllControllers(
-        (controller) -> controller.LeftBumper.get()
-            .and(controller.LeftTrigger.get())
-            .and(controller.LeftBumper.get())
-            .and(controller.RightBumper.get())
-            .and(controller.RightTrigger.get())
-            .and(controller.LeftStickPress.get())
-            .and(controller.RightStickPress.get())
-            .onTrue(new InstantCommand(() -> Robot.KILLIT())));
+      // Auto aim and shoot, end on button release
+      Robot.Zero.RightBumper.get().and(() -> !Robot.Zero.isJoysticksBeingTouched())
+          .whileTrue(new StartEndCommand(
+              () -> {
+                Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand);
+                Robot.shootCommand = new FullShootCameraCommands();
+                Robot.shootCommand.schedule();
+              },
+
+              () -> {
+                // "unschedule" all commands if canceled
+                CommandScheduler.getInstance().removeComposedCommand(Robot.TeleDriveCommand);
+                CommandScheduler.getInstance().removeComposedCommand(Robot.CamCommand);
+                CommandScheduler.getInstance().removeComposedCommand(Robot.Shooter.getSpeedCommand());
+                CommandScheduler.getInstance().removeComposedCommand(Robot.shootCommand);
+                CommandScheduler.getInstance().removeComposedCommand(Robot.Turret.getMoveCommand());
+                Robot.shootCommand.cancel();
+                Robot.CamCommand.cancel();
+                Robot.Shooter.stopCommands();
+                Robot.TeleDriveCommand.schedule();
+              }));
+
+      // sudo kill -f *
+      // all front buttons and and both stick press
+      Robot.doOnAllControllers(
+          (controller) -> controller.LeftBumper.get()
+              .and(controller.LeftTrigger.get())
+              .and(controller.LeftBumper.get())
+              .and(controller.RightBumper.get())
+              .and(controller.RightTrigger.get())
+              .and(controller.LeftStickPress.get())
+              .and(controller.RightStickPress.get())
+              .onTrue(new InstantCommand(() -> Robot.KILLIT())));
+    }
   }
 }
