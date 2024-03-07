@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.SyncedLibraries.AutoControllerSelector;
 import frc.robot.SyncedLibraries.Controllers;
 import frc.robot.SyncedLibraries.Controllers.ControllerBase;
 import frc.robot.SyncedLibraries.SystemBases.*;
@@ -44,6 +45,8 @@ public class Robot extends TimedRobot {
   public static ControllerBase Three;
   public static ControllerBase Four;
   public static ControllerBase Five;
+  public static AutoControllerSelector DrivingContSelector;
+  public static AutoControllerSelector SecondaryContSelector;
 
   @Override
   public void robotInit() {
@@ -59,7 +62,7 @@ public class Robot extends TimedRobot {
     DriveTrain = new DriveTrain2024();
     // DriveTrain.resetAll();
     // DriveTrain.invertAll();
-    TeleDriveCommand = new TeleDriveCommand2024(Zero, Two, Three);
+    TeleDriveCommand = new TeleDriveCommand2024(DrivingContSelector, SecondaryContSelector);
     PDP = new PowerDistribution(20, ModuleType.kRev);
     CamCommand = new DriveTrainCamCommand(TeleDriveCommand);
     Intake = new Intake();
@@ -250,5 +253,10 @@ public class Robot extends TimedRobot {
     Three.setJoystickMultiplier(0.5);
     Four = m_controllers.Four;
     Five = m_controllers.Five;
+
+    DrivingContSelector = new AutoControllerSelector(m_controllers);
+    DrivingContSelector.addController(0, 2, 3);
+    SecondaryContSelector = new AutoControllerSelector(m_controllers);
+    SecondaryContSelector.addController(1, 2, 3);
   }
 }

@@ -26,7 +26,6 @@ public class RobotContainer {
 
       Robot.One.LeftBumper.get().onTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(true)))
           .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
-
     } else {
       Robot.Zero.PovUp.get().onTrue(new InstantCommand(() -> {
         Robot.Conveyor.setPower(-1);
