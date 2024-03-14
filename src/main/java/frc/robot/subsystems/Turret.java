@@ -28,6 +28,7 @@ public class Turret extends ManipulatorBase {
     setBrakeMode(true);
     setPositionPID();
     setMaxPower(DeviceConstants.turretMaxPower);
+    setCurrentLimit(20);
   }
 
   public void sendIt(int angle) {
@@ -37,6 +38,20 @@ public class Turret extends ManipulatorBase {
 
   public void setPositionPID() {
     setPositionPID(kP, kI, kD, tolerance);
+  }
+
+  public void sudoMode(boolean on) {
+    if (on) {
+      setMaxPower(1);
+      for (CANSparkMax motor : getMotors()) {
+        motor.setSmartCurrentLimit(40);
+      }
+    } else {
+      setMaxPower(DeviceConstants.turretMaxPower);
+      for (CANSparkMax motor : getMotors()) {
+        motor.setSmartCurrentLimit(20);
+      }
+    }
   }
 
   @Override

@@ -21,7 +21,7 @@ import frc.robot.SyncedLibraries.RobotState.*;
 
 public class Robot extends TimedRobot {
   public static RobotContainer RobotContainer;
-  public static DriveTrainBase DriveTrain;
+  public static DriveTrain2024 DriveTrain;
   public static Intake Intake;
   public static Shooter Shooter;
   public static Turret Turret;
@@ -149,7 +149,7 @@ public class Robot extends TimedRobot {
     // turn on intake
     // Turret.home();
 
-    Command[] testCommands = new Command[ManipulatorBase.allManipulators.size()];
+    Command[] testCommands = new Command[ManipulatorBase.allManipulators.size() + 1];
     for (int i = 0; i < ManipulatorBase.allManipulators.size(); i++) {
       ManipulatorBase subsystem = ManipulatorBase.allManipulators.get(i);
       System.out.println("Adding " + subsystem.getName());
@@ -157,9 +157,10 @@ public class Robot extends TimedRobot {
           new InstantCommand(
               () -> DriverStation.reportWarning("Testing " +
                   subsystem.getName(), false)),
-          subsystem.home(),
-          subsystem.test());
+          subsystem.home().withTimeout(5),
+          subsystem.test().withTimeout(5));
     }
+    testCommands[testCommands.length  - 1] = new InstantCommand(() -> DriverStation.reportWarning("Finished testing routine", false));
     new SequentialCommandGroup(testCommands).schedule();
   }
 

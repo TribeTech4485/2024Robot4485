@@ -34,6 +34,7 @@ public class Shooter extends ManipulatorBase {
     getSpeedCommand().schedule();
     // getSpeedCommand().setEndOnTarget(true).andThen(new InstantCommand(() ->
     // fullStop()));
+    setCurrentLimit(15);
   }
 
   /**

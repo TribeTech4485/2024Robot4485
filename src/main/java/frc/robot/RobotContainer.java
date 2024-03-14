@@ -39,6 +39,10 @@ public class RobotContainer {
       // Robot.DriveTrain.doSlowMode(true)))
       // .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
 
+
+      Robot.Zero.LeftStickPress.get().onTrue(new InstantCommand(() -> Robot.DriveTrain.sudoMode(true)));
+      Robot.Zero.RightStickPress.get().onTrue(new InstantCommand(() -> Robot.DriveTrain.sudoMode(false)));
+
       // Here is xbox controlls
       Robot.One.RightTrigger.get().and(() -> !Robot.One.isJoystick)
           .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
@@ -76,6 +80,12 @@ public class RobotContainer {
       Robot.One.B.get().and(() -> !Robot.One.isJoystick)
           .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(2000)))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+      Robot.One.LeftStickPress.get().and(() -> !Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Turret.sudoMode(true)));
+
+      Robot.One.RightStickPress.get().and(() -> !Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Turret.sudoMode(false)));
 
       // Joystick controlls
       // trigger

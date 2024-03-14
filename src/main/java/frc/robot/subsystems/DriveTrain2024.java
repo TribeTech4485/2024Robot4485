@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
@@ -29,5 +30,23 @@ public class DriveTrain2024 extends DriveTrainBase {
     resetEncoders();
     resetGyro();
     doSlowMode(false);
+  }
+
+  public void sudoMode(boolean on) {
+    DriverStation.reportWarning("DRIVETRAIN OVERDRIVE: " + on, false);
+    if (on) {
+      for (CANSparkMax motor : getAllMotors()) {
+        motor.setOpenLoopRampRate(0);
+        motor.setClosedLoopRampRate(0);
+        motor.setSmartCurrentLimit(40);
+        doSlowMode(false);
+      }
+    } else {
+      for (CANSparkMax motor : getAllMotors()) {
+        motor.setOpenLoopRampRate(DriveConstants.drivingRamp);
+        motor.setClosedLoopRampRate(DriveConstants.drivingRamp);
+        motor.setSmartCurrentLimit(DriveConstants.driveAmpsMax);
+      }
+    }
   }
 }
