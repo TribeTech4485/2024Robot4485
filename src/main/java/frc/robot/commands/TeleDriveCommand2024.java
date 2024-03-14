@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import frc.robot.Robot;
 import frc.robot.SyncedLibraries.AutoControllerSelector;
+import frc.robot.SyncedLibraries.BasicFunctions;
 import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 
 /** Add your docs here. */
@@ -19,7 +20,7 @@ public class TeleDriveCommand2024 extends TeleDriveCommandBase {
   public void execute() {
     super.execute();
     if (Robot.Turret.getCurrentCommand() == null) {
-      Robot.Turret.setPower(ys[1][2], false);
+      Robot.Turret.setPower(BasicFunctions.smartExp(-ys[1][0], 2), false);
     }
   }
 }

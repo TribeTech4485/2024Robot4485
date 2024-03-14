@@ -18,14 +18,104 @@ public class RobotContainer {
   }
 
   public void configureBindings() {
-    boolean competitonMode = false;
+    boolean competitonMode = true;
     if (competitonMode) {
-      Robot.Zero.LeftBumper.get().or(Robot.Zero.RightBumper.get())
+      Robot.Zero.RightBumper.get()
           .onTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(true)))
           .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
 
-      Robot.One.LeftBumper.get().onTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(true)))
-          .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
+      Robot.Zero.RightTrigger.get()
+          .onTrue(new InstantCommand(() -> Robot.DriveTrain.setBrakeMode(true)))
+          .onFalse(new InstantCommand(() -> Robot.DriveTrain.setBrakeMode(false)));
+
+      // cam command
+      Robot.Zero.LeftBumper.get();
+
+      // straight
+      Robot.Zero.LeftTrigger.get()
+          .onTrue(new InstantCommand(() -> Robot.TeleDriveCommand.straightDrive(true)))
+          .onFalse(new InstantCommand(() -> Robot.TeleDriveCommand.straightDrive(false)));
+      // Robot.One.LeftBumper.get().onTrue(new InstantCommand(() ->
+      // Robot.DriveTrain.doSlowMode(true)))
+      // .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
+
+      // Here is xbox controlls
+      Robot.One.RightTrigger.get().and(() -> !Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
+              SmartDashboard.getNumber("Shooter target", 0))))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+      Robot.One.LeftTrigger.get().and(() -> !Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
+              -SmartDashboard.getNumber("Shooter target", 0))))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+      Robot.One.RightBumper.get().and(() -> !Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> {
+            Robot.Conveyor.setPower(-1);
+            Robot.Intake.sendIt(-8000);
+          }))
+          .onFalse(new InstantCommand(() -> {
+            Robot.Conveyor.fullStop();
+            Robot.Intake.fullStop();
+          }));
+
+      Robot.One.LeftBumper.get().and(() -> !Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> {
+            Robot.Conveyor.setPower(0.5);
+            Robot.Intake.sendIt(8000);
+          }))
+          .onFalse(new InstantCommand(() -> {
+            Robot.Conveyor.fullStop();
+            Robot.Intake.fullStop();
+          }));
+
+      Robot.One.A.get().and(() -> !Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(-2000)))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+      Robot.One.B.get().and(() -> !Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(2000)))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+      // Joystick controlls
+      // trigger
+      Robot.One.A.get().and(() -> Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
+              SmartDashboard.getNumber("Shooter target", 0))))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+      // 2
+      Robot.One.B.get().and(() -> Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> {
+            Robot.Conveyor.setPower(-1);
+            Robot.Intake.sendIt(-8000);
+          }))
+          .onFalse(new InstantCommand(() -> {
+            Robot.Conveyor.fullStop();
+            Robot.Intake.fullStop();
+          }));
+
+      // 7
+      Robot.One.Share.get().and(() -> Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> {
+            Robot.Conveyor.setPower(0.5);
+            Robot.Intake.sendIt(8000);
+          }))
+          .onFalse(new InstantCommand(() -> {
+            Robot.Conveyor.fullStop();
+            Robot.Intake.fullStop();
+          }));
+
+      // 8
+      Robot.One.Options.get().and(() -> Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(-2000)))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+      // 9
+      Robot.One.LeftTrigger.get().and(() -> Robot.One.isJoystick)
+          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(2000)))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
     } else {
       Robot.Zero.PovUp.get().onTrue(new InstantCommand(() -> {
         Robot.Conveyor.setPower(-1);
@@ -35,9 +125,6 @@ public class RobotContainer {
         Robot.Conveyor.fullStop();
         Robot.Intake.fullStop();
       }));
-
-      // Robot.Zero.PovDown.get().onTrue(new InstantCommand(() ->
-      // Robot.Conveyor.setPower(1)));
 
       Robot.Zero.PovLeft.get()
           .onTrue(new InstantCommand(() -> Robot.Turret.moveToPosition(Robot.Turret.getPosition())));
@@ -87,18 +174,19 @@ public class RobotContainer {
                 Robot.Shooter.stopCommands();
                 Robot.TeleDriveCommand.schedule();
               }));
-
-      // sudo kill -f *
-      // all front buttons and and both stick press
-      Robot.doOnAllControllers(
-          (controller) -> controller.LeftBumper.get()
-              .and(controller.LeftTrigger.get())
-              .and(controller.LeftBumper.get())
-              .and(controller.RightBumper.get())
-              .and(controller.RightTrigger.get())
-              .and(controller.LeftStickPress.get())
-              .and(controller.RightStickPress.get())
-              .onTrue(new InstantCommand(() -> Robot.KILLIT())));
     }
+
+    // sudo kill -f *
+    // all front buttons and and both stick press
+    Robot.doOnControllers(
+        (controller) -> controller.LeftBumper.get()
+            .and(controller.LeftTrigger.get())
+            .and(controller.LeftBumper.get())
+            .and(controller.RightBumper.get())
+            .and(controller.RightTrigger.get())
+            .and(controller.LeftStickPress.get())
+            .and(controller.RightStickPress.get())
+            .onTrue(new InstantCommand(() -> Robot.KILLIT())),
+        0, 1, 2, 3, 4);
   }
 }

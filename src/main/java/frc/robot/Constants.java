@@ -21,7 +21,7 @@ public final class Constants {
     public static final int GearChangeUp = 0;
     public static final int GearChangeDown = 1;
 
-    public static final int driveAmpsMax = 20;
+    public static final int driveAmpsMax = 30;
     public static final int drivingExponent = 1;
     public static final double drivingRamp = 0;
     public static final double controllerJoystickDeadband = 0.15;
@@ -53,7 +53,7 @@ public final class Constants {
     public static final double shooterSpeedKI = 0.0005;
     public static final double shooterSpeedKD = 0;
     public static final double shooterSpeedTolerance = 25;
-    public static final int shooterDefaultSpeed = 5000;
+    public static final int shooterDefaultSpeed = 6000;
 
     public static final double turretPositionKP = 0;
     public static final double turretPositionKI = 0;

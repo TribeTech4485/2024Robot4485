@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
     AutonomousCommand = RobotContainer.getAutonomousCommand();
     DriveTrain = new DriveTrain2024();
     // DriveTrain.resetAll();
-    // DriveTrain.invertAll();
+    DriveTrain.invertAll();
     TeleDriveCommand = new TeleDriveCommand2024(DrivingContSelector, SecondaryContSelector);
     PDP = new PowerDistribution(20, ModuleType.kRev);
     CamCommand = new DriveTrainCamCommand(TeleDriveCommand);
@@ -182,6 +182,7 @@ public class Robot extends TimedRobot {
    * Robot.doOnAllControllers((controller) -> {});
    */
   public static void doOnAllControllers(ControllerRunnable r) {
+    System.out.println("Doing on all controllers");
     r.run(Zero);
     r.run(One);
     r.run(Two);
