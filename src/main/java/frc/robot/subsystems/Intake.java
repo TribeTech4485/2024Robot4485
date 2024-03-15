@@ -28,6 +28,7 @@ public class Intake extends ManipulatorBase {
     setPositionPID(kP, kI, kD, tolerance);
     setTargetSpeed(speed);
     // getSpeedCommand().andThen(new InstantCommand(() -> fullStop()));
+    setCurrentLimit(DeviceConstants.intakeAmpsMax);
   }
 
   @Override

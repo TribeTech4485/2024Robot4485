@@ -28,7 +28,7 @@ public class Turret extends ManipulatorBase {
     setBrakeMode(true);
     setPositionPID();
     setMaxPower(DeviceConstants.turretMaxPower);
-    setCurrentLimit(20);
+    setCurrentLimit(DeviceConstants.turretAmpsMax);
   }
 
   public void sendIt(int angle) {
@@ -49,7 +49,7 @@ public class Turret extends ManipulatorBase {
     } else {
       setMaxPower(DeviceConstants.turretMaxPower);
       for (CANSparkMax motor : getMotors()) {
-        motor.setSmartCurrentLimit(20);
+        motor.setSmartCurrentLimit(DeviceConstants.turretAmpsMax);
       }
     }
   }

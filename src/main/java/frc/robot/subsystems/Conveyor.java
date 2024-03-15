@@ -19,7 +19,7 @@ public class Conveyor extends ManipulatorBase {
     public Conveyor() {
         addMotors(new CANSparkMax(DeviceConstants.conveyorMotorId, CANSparkMax.MotorType.kBrushless));
         setMaxPower(DeviceConstants.conveyorPower);
-        setCurrentLimit(10);
+        setCurrentLimit(DeviceConstants.conveyorAmpsMax);
     }
 
     @Override
