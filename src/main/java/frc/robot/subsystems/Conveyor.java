@@ -24,8 +24,8 @@ public class Conveyor extends ManipulatorBase {
 
     @Override
     public void periodic() {
-        SmartDashboard.putBoolean("Note in conveyor", isNoteIn());
-        SmartDashboard.putNumber("Conveyor Proximity", colorSensor.getProximity());
+        // SmartDashboard.putBoolean("Note in conveyor", isNoteIn());
+        // SmartDashboard.putNumber("Conveyor Proximity", colorSensor.getProximity());
         SmartDashboard.putBoolean("Conveyor running", isRunning());
     }
 

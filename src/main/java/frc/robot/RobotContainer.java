@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.robot.commands.DriveTrainCamCommand;
 import frc.robot.commands.FullShootCameraCommands;
@@ -24,17 +25,20 @@ public class RobotContainer {
       // ================ Primary ================ //
 
       // precision drive
-      Robot.Zero.RightBumper.get()
-          .onTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(0.1)))
-          .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
+      // Robot.Zero.RightTrigger.get()
+      //     .whileTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(1 - (Robot.Zero.getRightTrigger() * 0.9))))
+      //     .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
 
       // brake
-      Robot.Zero.RightTrigger.get()
+      Robot.Zero.RightBumper.get()
           .onTrue(new InstantCommand(() -> Robot.DriveTrain.setBrakeMode(true)))
           .onFalse(new InstantCommand(() -> Robot.DriveTrain.setBrakeMode(false)));
 
       // cam command
-      Robot.Zero.LeftBumper.get();
+      Robot.Zero.LeftBumper.get().onTrue(new SequentialCommandGroup(
+          new InstantCommand(() -> Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand)),
+          Robot.CamCommand))
+          .onFalse(new InstantCommand(() -> Robot.CamCommand.cancel()));
 
       // straight
       Robot.Zero.LeftTrigger.get()

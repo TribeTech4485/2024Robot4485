@@ -22,5 +22,6 @@ public class TeleDriveCommand2024 extends TeleDriveCommandBase {
     if (Robot.Turret.getCurrentCommand() == null) {
       Robot.Turret.setPower(BasicFunctions.smartExp(-ys[1][0], 2), false);
     }
+    Robot.DriveTrain.doSlowMode(1 - (Robot.Zero.getRightTrigger() * 0.8));
   }
 }

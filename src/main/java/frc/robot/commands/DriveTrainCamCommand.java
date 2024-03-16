@@ -25,7 +25,18 @@ public class DriveTrainCamCommand extends Command {
   Command driveCommand;
   boolean hasEverSeenTarget = false;
 
+  public DriveTrainCamCommand() {
+    System.out.println("DriveTrainCamCommand empty");
+    // addRequirements(Robot.DriveTrain);
+    // photon = Robot.PhotonVision;
+    // driveTrain = Robot.DriveTrain;
+    // gyro = Robot.DriveTrain.getGyro();
+    // pidController = new PIDController(0.05, 0.01, 0);
+    // pidController.setTolerance(tolerance);
+    // pidController.setSetpoint(0);
+  }
   public DriveTrainCamCommand(Command teleDriveCommand) {
+    System.out.println("DriveTrainCamCommand full");
     addRequirements(Robot.DriveTrain);
     photon = Robot.PhotonVision;
     driveTrain = Robot.DriveTrain;
@@ -95,6 +106,7 @@ public class DriveTrainCamCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    driveCommand.schedule();
   }
 
   // Returns true when the command should end.
