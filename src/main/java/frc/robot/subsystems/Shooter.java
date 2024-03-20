@@ -28,14 +28,20 @@ public class Shooter extends ManipulatorBase {
     SmartDashboard.putNumber("Shooter target", defaultSpeed);
   }
 
-  public void sedPID(double target) {
+  /** prepare speed command */
+  public ManipulatorSpeedCommand prepare(double target) {
     setSpeedPID(kP, kI, kD, tolerance);
     getSpeedCommand().setTargetSpeed(target);
-    getSpeedCommand().schedule();
     // getSpeedCommand().setEndOnTarget(true).andThen(new InstantCommand(() ->
     // fullStop()));
     setCurrentLimit(DeviceConstants.shooterAmpsMax);
     setRampRate(0);
+    return getSpeedCommand();
+  }
+
+  /** prepare speed command */
+  public ManipulatorSpeedCommand prepare() {
+    return prepare(SmartDashboard.getNumber("Shooter target", defaultSpeed));
   }
 
   /**
@@ -43,20 +49,21 @@ public class Shooter extends ManipulatorBase {
    * <p>
    * What you want for normal use
    */
-  public void shoot() {
-    getSpeedCommand().setTargetSpeed(SmartDashboard.getNumber("Shooter target", defaultSpeed));
+  public ManipulatorSpeedCommand shoot() {
+    prepare(SmartDashboard.getNumber("Shooter target", defaultSpeed));
     getSpeedCommand().schedule();
-  }
-
-  /** Sets target speed and returns command for use in Command groups */
-  public ManipulatorSpeedCommand shootCommand() {
-    getSpeedCommand().setTargetSpeed(SmartDashboard.getNumber("Shooter target", defaultSpeed));
     return getSpeedCommand();
   }
 
-  public void adjust() {
-    getSpeedCommand().setTargetSpeed(SmartDashboard.getNumber("Shooter target", 0));
+  public ManipulatorSpeedCommand inShoot() {
+    prepare(-SmartDashboard.getNumber("Shooter target", defaultSpeed));
+    getSpeedCommand().schedule();
+    return getSpeedCommand();
   }
+
+  // public void adjust() {
+  //   getSpeedCommand().setTargetSpeed(SmartDashboard.getNumber("Shooter target", 0));
+  // }
 
   @Override
   public void periodic() {
@@ -75,12 +82,12 @@ public class Shooter extends ManipulatorBase {
   public Command test() {
     setSpeedPID(kP, kI, kD, tolerance);
     return new SequentialCommandGroup(
-      shootCommand().setEndOnTarget(true),
-      new InstantCommand(() -> System.out.println("Shoot")),
+      prepare().setEndOnTarget(true),
+      // new InstantCommand(() -> System.out.println("Shoot")),
       new WaitCommand(1),
-      new InstantCommand(() -> System.out.println("stop")),
-      new InstantCommand(() -> fullStop()),
-      new InstantCommand(() -> System.out.println("stoped"))
+      // new InstantCommand(() -> System.out.println("stop")),
+      new InstantCommand(() -> fullStop())
+      // new InstantCommand(() -> System.out.println("stoped"))
     );
   }
 }

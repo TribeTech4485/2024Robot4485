@@ -1,17 +1,41 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
-import frc.robot.commands.DriveTrainCamCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
+import frc.robot.commands.DriveTrainMoveCamCommand;
+import frc.robot.commands.DriveTrainTurnCamCommand;
 import frc.robot.commands.FullShootCameraCommands;
 
 public class RobotContainer {
+  static boolean mode = false;
+
+  public static boolean getMode() {
+    return mode;
+  }
+
+  public static boolean getInMode() {
+    return !mode;
+  }
+
+  public static void setMode(boolean newMode) {
+    mode = newMode;
+  }
+
   public RobotContainer() {
     configureBindings();
+    SendableChooser<Command> autoChooser = new SendableChooser<>();
+    autoChooser.setDefaultOption("Shoot and back up", new SequentialCommandGroup(
+      Robot.CamCommand,
+      Robot.Shooter.shoot()
+    ));
+    autoChooser.addOption("Back up", null);
+    SmartDashboard.putData("Autonomus command", autoChooser);
   }
 
   public Command getAutonomousCommand() {
@@ -26,8 +50,9 @@ public class RobotContainer {
 
       // precision drive
       // Robot.Zero.RightTrigger.get()
-      //     .whileTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(1 - (Robot.Zero.getRightTrigger() * 0.9))))
-      //     .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
+      // .whileTrue(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(1 -
+      // (Robot.Zero.getRightTrigger() * 0.9))))
+      // .onFalse(new InstantCommand(() -> Robot.DriveTrain.doSlowMode(false)));
 
       // brake
       Robot.Zero.RightBumper.get()
@@ -36,9 +61,17 @@ public class RobotContainer {
 
       // cam command
       Robot.Zero.LeftBumper.get().onTrue(new SequentialCommandGroup(
-          new InstantCommand(() -> Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand)),
-          Robot.CamCommand))
-          .onFalse(new InstantCommand(() -> Robot.CamCommand.cancel()));
+          new InstantCommand(
+              () -> Robot.CamCommand = new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true)
+                  .andThen(new DriveTrainMoveCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true))
+                  .andThen(new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true))
+                  .andThen(new InstantCommand(Robot.TeleDriveCommand::schedule))),
+
+          new ProxyCommand(Robot::getCamCommand)))
+          .onFalse(new InstantCommand(() -> {
+            Robot.CamCommand.cancel();
+            Robot.TeleDriveCommand.schedule();
+          }));
 
       // straight
       Robot.Zero.LeftTrigger.get()
@@ -63,20 +96,60 @@ public class RobotContainer {
             Robot.TeleDriveCommand.schedule();
           }));
 
+      // shoot
+      Robot.Zero.Y.get()
+          .onTrue(new InstantCommand(() -> Robot.Shooter.shoot()))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+      // unshoot
+      Robot.Zero.X.get()
+          .onTrue(new InstantCommand(() -> Robot.Shooter.inShoot()))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+      // top intake
+      Robot.Zero.A.get()
+          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(-2000).schedule()))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+      // top outtake
+      Robot.Zero.B.get()
+          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(2000).schedule()))
+          .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+      // unintake
+      Robot.Zero.PovLeft.get()
+          .onTrue(new InstantCommand(() -> {
+            Robot.Conveyor.setPower(0.5);
+            Robot.Intake.sendIt(8000);
+          }))
+          .onFalse(new InstantCommand(() -> {
+            Robot.Conveyor.fullStop();
+            Robot.Intake.fullStop();
+          }));
+
+      // intake
+      Robot.Zero.PovRight.get()
+          .onTrue(new InstantCommand(() -> {
+            Robot.Conveyor.setPower(-1);
+            Robot.Intake.sendIt(-8000);
+          }))
+          .onFalse(new InstantCommand(() -> {
+            Robot.Conveyor.fullStop();
+            Robot.Intake.fullStop();
+          }));
+
+      // pov up and down controls arm
+
       // ================ Secondary ================ //
 
       // dominant hand does main controls //
 
       // shoot
       Robot.One.RightTrigger.get()// .and(() -> !Robot.One.isJoystick)
-          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
-              SmartDashboard.getNumber("Shooter target", 0))))
+          .onTrue(new InstantCommand(() -> Robot.Shooter.shoot()))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
 
       // unshoot
       Robot.One.LeftTrigger.get()// .and(() -> !Robot.One.isJoystick)
-          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
-              -SmartDashboard.getNumber("Shooter target", 0))))
+          .onTrue(new InstantCommand(() -> Robot.Shooter.inShoot()))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
 
       // intake
@@ -103,11 +176,11 @@ public class RobotContainer {
 
       // top intake
       Robot.One.A.get()// .and(() -> !Robot.One.isJoystick)
-          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(-2000)))
+          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(-2000).schedule()))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
       // top outtake
       Robot.One.B.get()// .and(() -> !Robot.One.isJoystick)
-          .onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(2000)))
+          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(2000).schedule()))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
 
       // STRONK
@@ -157,6 +230,90 @@ public class RobotContainer {
        * .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
        */
 
+      boolean AAAA = false;
+      if (AAAA) {
+        // ================ Tertiary ================ //
+        // brake
+        Robot.Four.RightBumper.get().and(RobotContainer::getMode)
+            .onTrue(new InstantCommand(() -> Robot.DriveTrain.setBrakeMode(true)))
+            .onFalse(new InstantCommand(() -> Robot.DriveTrain.setBrakeMode(false)));
+
+        // cam command
+        Robot.Four.LeftBumper.get().and(RobotContainer::getMode)
+            .onTrue(new SequentialCommandGroup(
+                new InstantCommand(() -> Robot.CamCommand = new DriveTrainTurnCamCommand(
+                    Robot.TeleDriveCommand).setEndOnTarget(true)),
+                new ProxyCommand(Robot::getCamCommand)))
+            .onFalse(new InstantCommand(() -> Robot.CamCommand.cancel()));
+
+        // straight
+        Robot.Four.LeftTrigger.get().and(RobotContainer::getMode)
+            .onTrue(new InstantCommand(() -> Robot.TeleDriveCommand.straightDrive(true)))
+            .onFalse(new InstantCommand(() -> Robot.TeleDriveCommand.straightDrive(false)));
+
+        // STRONK
+        Robot.Four.LeftStickPress.get()
+            .onTrue(new InstantCommand(() -> RobotContainer.setMode(true)));
+        Robot.Four.RightStickPress.get()
+            .onTrue(new InstantCommand(() -> RobotContainer.setMode(false)));
+
+        // STRONK + pedal to the metal
+        // Robot.Four.LeftStickPress.get().and(Robot.Four.RightStickPress.get()).and(RobotContainer::getMode)
+        // .onTrue(new InstantCommand(() -> {
+        // Robot.DriveTrain.sudoMode(true);
+        // Robot.DriveTrain.doTankDrive(1, 1);
+        // Robot.TeleDriveCommand.cancel();
+        // }))
+        // .onFalse(new InstantCommand(() -> {
+        // Robot.DriveTrain.sudoMode(false);
+        // Robot.TeleDriveCommand.schedule();
+        // }));
+
+        // ================ Secondary ================ //
+
+        // dominant hand does main controls //
+
+        // shoot
+        Robot.Four.RightTrigger.get().and(RobotContainer::getInMode)
+            .onTrue(new InstantCommand(() -> Robot.Shooter.shoot()))
+            .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+        // unshoot
+        Robot.Four.LeftTrigger.get().and(RobotContainer::getInMode)
+            .onTrue(new InstantCommand(() -> Robot.Shooter.inShoot()))
+            .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+
+        // intake
+        Robot.Four.RightBumper.get().and(RobotContainer::getInMode)
+            .onTrue(new InstantCommand(() -> {
+              Robot.Conveyor.setPower(-1);
+              Robot.Intake.sendIt(-8000);
+            }))
+            .onFalse(new InstantCommand(() -> {
+              Robot.Conveyor.fullStop();
+              Robot.Intake.fullStop();
+            }));
+
+        // unintake
+        Robot.Four.LeftBumper.get().and(RobotContainer::getInMode)
+            .onTrue(new InstantCommand(() -> {
+              Robot.Conveyor.setPower(0.5);
+              Robot.Intake.sendIt(8000);
+            }))
+            .onFalse(new InstantCommand(() -> {
+              Robot.Conveyor.fullStop();
+              Robot.Intake.fullStop();
+            }));
+
+        // top intake
+        Robot.Four.A.get().and(RobotContainer::getInMode)
+            .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(-2000).schedule()))
+            .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+        // top outtake
+        Robot.Four.B.get().and(RobotContainer::getInMode)
+            .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(2000).schedule()))
+            .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
+      }
     } else {
       Robot.Zero.PovUp.get().onTrue(new InstantCommand(() -> {
         Robot.Conveyor.setPower(-1);
@@ -174,11 +331,10 @@ public class RobotContainer {
 
       Robot.doOnAllControllers(
           (controller) -> {
-            controller.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(
-                SmartDashboard.getNumber("Shooter target", 0))));
+            controller.A.get().onTrue(new InstantCommand(() -> Robot.Shooter.shoot()));
             controller.B.get().onTrue(new InstantCommand(() -> Robot.Shooter.stopCommands()));
-            controller.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(2000)));
-            controller.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.sedPID(-2000)));
+            controller.Y.get().onTrue(new InstantCommand(() -> Robot.Shooter.prepare(2000).schedule()));
+            controller.X.get().onTrue(new InstantCommand(() -> Robot.Shooter.prepare(-2000).schedule()));
           });
 
       // Auto aim, end on button release
@@ -198,7 +354,7 @@ public class RobotContainer {
       Robot.Zero.RightBumper.get().and(() -> !Robot.Zero.isJoysticksBeingTouched())
           .whileTrue(new StartEndCommand(
               () -> {
-                Robot.CamCommand = new DriveTrainCamCommand(Robot.TeleDriveCommand);
+                Robot.CamCommand = new DriveTrainTurnCamCommand(Robot.TeleDriveCommand);
                 Robot.shootCommand = new FullShootCameraCommands();
                 Robot.shootCommand.schedule();
               },

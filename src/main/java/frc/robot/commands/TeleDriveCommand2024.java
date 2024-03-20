@@ -20,8 +20,16 @@ public class TeleDriveCommand2024 extends TeleDriveCommandBase {
   public void execute() {
     super.execute();
     if (Robot.Turret.getCurrentCommand() == null) {
-      Robot.Turret.setPower(BasicFunctions.smartExp(-ys[1][0], 2), false);
+      double turSpeed = BasicFunctions.smartExp(-ys[1][0], 2);
+      if (Math.abs(turSpeed) < 0.1) {
+        if (Robot.Zero.PovUp.get().getAsBoolean()) {
+          turSpeed = 1;
+        } else if (Robot.Zero.PovDown.get().getAsBoolean()) {
+          turSpeed = -1;
+        }
+      }
+      Robot.Turret.setPower(turSpeed, false);
     }
-    Robot.DriveTrain.doSlowMode(1 - (Robot.Zero.getRightTrigger() * 0.8));
+    Robot.DriveTrain.doSlowMode(1 - ((1 - BasicFunctions.smartExp(1 - Robot.Zero.getRightTrigger(), 1.5)) * 0.8));
   }
 }

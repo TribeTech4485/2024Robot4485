@@ -8,6 +8,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
 
 public class DriveTrain2024 extends DriveTrainBase {
+  boolean sudoMode = false;
   private final static CANSparkMax[] leftDriveMotorsInput = new CANSparkMax[] {
       new CANSparkMax(1, CANSparkMax.MotorType.kBrushless),
       new CANSparkMax(2, CANSparkMax.MotorType.kBrushless) };
@@ -34,6 +35,7 @@ public class DriveTrain2024 extends DriveTrainBase {
 
   public void sudoMode(boolean on) {
     DriverStation.reportWarning("DRIVETRAIN OVERDRIVE: " + on, false);
+    sudoMode = on;
     if (on) {
       for (CANSparkMax motor : getAllMotors()) {
         motor.setOpenLoopRampRate(0);
@@ -48,5 +50,16 @@ public class DriveTrain2024 extends DriveTrainBase {
         motor.setSmartCurrentLimit(DriveConstants.driveAmpsMax);
       }
     }
+  }
+
+  @Override
+  public void doSlowMode(double speed) {
+    if (!sudoMode) {
+      super.doSlowMode(speed);
+    }
+  }
+
+  public boolean getBrakeMode() {
+    return getAllMotors()[0].getIdleMode() == CANSparkMax.IdleMode.kBrake;
   }
 }

@@ -18,12 +18,10 @@ public class FullShootCameraCommands extends SequentialCommandGroup {
   public FullShootCameraCommands() {
     addCommands(
         // turn towards target
-        new ParallelCommandGroup(
-            Robot.CamCommand,
-            new TurretCamRotateCommand()),
+        Robot.CamCommand,
 
         // spin up shooter and wait
-        Robot.Shooter.shootCommand().setEndOnTarget(true),
+        Robot.Shooter.shoot().setEndOnTarget(true),
 
         Robot.Conveyor.sendToShooterCommand(),
 

@@ -1,32 +1,30 @@
 package frc.robot.commands;
 
-import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.SyncedLibraries.SystemBases.DriveTrainBase;
 import frc.robot.SyncedLibraries.SystemBases.PhotonVisionBase;
+import frc.robot.subsystems.DriveTrain2024;
 
-public class DriveTrainCamCommand extends Command {
+public class DriveTrainMoveCamCommand extends Command {
   PhotonVisionBase photon;
-  DriveTrainBase driveTrain;
+  DriveTrain2024 driveTrain;
   PIDController pidController;
-  AHRS gyro;
   boolean onTarget = false;
-  final double tolerance = 0.05;
+  final double tolerance = 0.2;
   final int onTargetCounterStart = 5;
   int onTargetCounter = onTargetCounterStart;
   boolean endOnTarget = false;
-  double gyroOffset = 0;
+  double memoryDistance = 0;
   /** Hopefully not necessary */
-  final double camAngleMultiplier = 1;
+  final double camAngleMultiplier = 2;
   final double maxSpeed = 0.25;
   Command driveCommand;
   boolean hasEverSeenTarget = false;
+  final boolean wasInBrakeMode;
 
-  public DriveTrainCamCommand() {
-    System.out.println("DriveTrainCamCommand empty");
+  public DriveTrainMoveCamCommand() {
     // addRequirements(Robot.DriveTrain);
     // photon = Robot.PhotonVision;
     // driveTrain = Robot.DriveTrain;
@@ -34,37 +32,38 @@ public class DriveTrainCamCommand extends Command {
     // pidController = new PIDController(0.05, 0.01, 0);
     // pidController.setTolerance(tolerance);
     // pidController.setSetpoint(0);
+    wasInBrakeMode = false;
   }
-  public DriveTrainCamCommand(Command teleDriveCommand) {
-    System.out.println("DriveTrainCamCommand full");
+
+  public DriveTrainMoveCamCommand(Command teleDriveCommand) {
     addRequirements(Robot.DriveTrain);
     photon = Robot.PhotonVision;
     driveTrain = Robot.DriveTrain;
-    gyro = Robot.DriveTrain.getGyro();
-    pidController = new PIDController(0.05, 0.01, 0);
+    pidController = new PIDController(0.2, 0.01, 0);
     pidController.setTolerance(tolerance);
-    pidController.setSetpoint(0);
+    pidController.setSetpoint(1.3);
     driveCommand = teleDriveCommand;
+    wasInBrakeMode = driveTrain.getBrakeMode();
   }
 
   @Override
   public void initialize() {
-    driveTrain.stop();
+    // driveTrain.stop();
+    driveTrain.setBrakeMode(true);
     pidController.reset();
-    System.out.println("Doing cam Turn");
+    System.out.println("DriveTrainMoveCamCommand: init");
   }
 
   @Override
   public void execute() {
-    double angle = 0;
-    double currGyro = -gyro.getAngle();
+    double distance = 0;
     if (hasEverSeenTarget) {
       if (photon.hasTarget) {
-        angle = photon.targetXYAngles[0] * camAngleMultiplier;
-        gyroOffset = currGyro - angle;
-        SmartDashboard.putNumber("LastSeen at", angle);
+        distance = photon.targetDistance;
+        memoryDistance = distance;
+        driveTrain.resetEncoders();
       } else {
-        angle = currGyro - gyroOffset;
+        distance = memoryDistance; // - (driveTrain.getLeftEncoderCount() * camAngleMultiplier);
       }
     } else if (photon.hasTarget) {
       hasEverSeenTarget = true;
@@ -73,32 +72,32 @@ public class DriveTrainCamCommand extends Command {
       return;
       // its easier to just restart the command
       // than to redo the logic
-    } else {
-      angle = 0;
     }
 
-    SmartDashboard.putNumber("Gyro offset", gyroOffset);
-    SmartDashboard.putNumber("Gyro val", currGyro);
-    SmartDashboard.putNumber("Gyro final", (currGyro - gyroOffset));
+    SmartDashboard.putNumber("LastSeen at", memoryDistance);
+    // SmartDashboard.putNumber("Gyro offset", gyroOffset);
+    SmartDashboard.putNumber("Distance val", distance);
+    // SmartDashboard.putNumber("Gyro final", (currGyro - gyroOffset));
     SmartDashboard.putBoolean("has targ", photon.hasTarget);
 
-    SmartDashboard.putNumber("Target angle", angle);
-    double speed = pidController.calculate(angle);
-    speed *= 0.1;
-    SmartDashboard.putNumber("Turn speed", speed);
+    // SmartDashboard.putNumber("Target angle", angle);
+    double speed = pidController.calculate(distance);
+    speed *= 1;
+    SmartDashboard.putNumber("Dist Turn speed", speed);
 
     // clamp
     if (Math.abs(speed) > maxSpeed) {
       speed = maxSpeed * Math.signum(speed);
     }
 
-    driveTrain.doTankDrive(speed, -speed);
-    if (angle < tolerance * 1.5) {
+    driveTrain.doTankDrive(speed, speed);
+    if (Math.abs(distance) - 1.5 < tolerance * 1.5) {
+      SmartDashboard.putNumber("ON TARGER COUNTER", onTargetCounter);
       if (onTargetCounter-- < 0) {
         onTarget = true;
       } else {
         onTarget = false;
-        onTargetCounter = onTargetCounterStart;
+        // onTargetCounter = onTargetCounterStart;
       }
     }
   }
@@ -106,7 +105,9 @@ public class DriveTrainCamCommand extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    driveCommand.schedule();
+    // driveCommand.schedule();
+    driveTrain.setBrakeMode(wasInBrakeMode);
+    System.out.println("DriveTrainMoveCamCommand: end");
   }
 
   // Returns true when the command should end.
@@ -116,5 +117,10 @@ public class DriveTrainCamCommand extends Command {
       return onTarget;
     }
     return false;
+  }
+
+  public DriveTrainMoveCamCommand setEndOnTarget(boolean endOnTarget) {
+    this.endOnTarget = endOnTarget;
+    return this;
   }
 }

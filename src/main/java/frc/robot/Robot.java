@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.SyncedLibraries.AutoControllerSelector;
 import frc.robot.SyncedLibraries.Controllers;
@@ -32,7 +33,7 @@ public class Robot extends TimedRobot {
 
   public static Command AutonomousCommand;
   public static TeleDriveCommandBase TeleDriveCommand;
-  public static DriveTrainCamCommand CamCommand = new DriveTrainCamCommand();
+  public static Command CamCommand = new DriveTrainTurnCamCommand();
   public static FullShootCameraCommands shootCommand;
 
   public static RobotStateEnum robotState = RobotStateEnum.Disabled;
@@ -57,17 +58,17 @@ public class Robot extends TimedRobot {
     DriverStation.silenceJoystickConnectionWarning(true);
     UpdateControllers();
 
+    Shooter = new Shooter();
     RobotContainer = new RobotContainer();
-    AutonomousCommand = RobotContainer.getAutonomousCommand();
     DriveTrain = new DriveTrain2024();
+    PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
+    AutonomousCommand = RobotContainer.getAutonomousCommand();
     TeleDriveCommand = new TeleDriveCommand2024(DrivingContSelector, SecondaryContSelector);
     PDP = new PowerDistribution(20, ModuleType.kRev);
-    CamCommand = new DriveTrainCamCommand(TeleDriveCommand);
+    CamCommand = new DriveTrainTurnCamCommand(TeleDriveCommand).setEndOnTarget(true);
     Intake = new Intake();
-    Shooter = new Shooter();
     Turret = new Turret();
     Conveyor = new Conveyor();
-    PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
     LED = new LedBase(0, 20, 20, 20);
     LED.sections[0].init(1, 2, Color.kRed, new Color(0, 255, 0), Color.kBlue).doMoveForward();
     LED.sections[1].init(1, 1).doOff();
@@ -141,21 +142,16 @@ public class Robot extends TimedRobot {
     m_controllers.fullUpdate();
     RobotContainer.configureBindings();
     Robot.DriveTrain.resetAll();
-    // Home all motors and sensors
-    // spin up shooter
-    // turn on intake
-    // Turret.home();
 
     Command[] testCommands = new Command[ManipulatorBase.allManipulators.size() + 1];
     for (int i = 0; i < ManipulatorBase.allManipulators.size(); i++) {
       ManipulatorBase subsystem = ManipulatorBase.allManipulators.get(i);
       System.out.println("Adding " + subsystem.getName());
       testCommands[i] = new SequentialCommandGroup(
-          new InstantCommand(
-              () -> DriverStation.reportWarning("Testing " +
-                  subsystem.getName(), false)),
+          new PrintCommand("Testing " + subsystem.getName()),
           subsystem.home().withTimeout(5),
-          subsystem.test().withTimeout(5));
+          subsystem.test().withTimeout(5),
+          new PrintCommand("Testing of " + subsystem.getName() + " finished"));
     }
     testCommands[testCommands.length - 1] = new InstantCommand(
         () -> DriverStation.reportWarning("Finished testing routine", false));
@@ -253,5 +249,9 @@ public class Robot extends TimedRobot {
     DrivingContSelector.addController(0, 2, 3);
     SecondaryContSelector = new AutoControllerSelector(m_controllers);
     SecondaryContSelector.addController(1, 2, 3);
+  }
+
+  public static Command getCamCommand() {
+    return CamCommand;
   }
 }
