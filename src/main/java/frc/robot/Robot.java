@@ -59,16 +59,16 @@ public class Robot extends TimedRobot {
     UpdateControllers();
 
     Shooter = new Shooter();
-    RobotContainer = new RobotContainer();
     DriveTrain = new DriveTrain2024();
+    Intake = new Intake();
+    Turret = new Turret();
+    Conveyor = new Conveyor();
+    RobotContainer = new RobotContainer();
     PhotonVision = new PhotonVision2024(new PhotonCamera("Microsoft_LifeCam_HD-3000"));
     AutonomousCommand = RobotContainer.getAutonomousCommand();
     TeleDriveCommand = new TeleDriveCommand2024(DrivingContSelector, SecondaryContSelector);
     PDP = new PowerDistribution(20, ModuleType.kRev);
     CamCommand = new DriveTrainTurnCamCommand(TeleDriveCommand).setEndOnTarget(true);
-    Intake = new Intake();
-    Turret = new Turret();
-    Conveyor = new Conveyor();
     LED = new LedBase(0, 20, 20, 20);
     LED.sections[0].init(1, 2, Color.kRed, new Color(0, 255, 0), Color.kBlue).doMoveForward();
     LED.sections[1].init(1, 1).doOff();
@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
     if (AutonomousCommand != null) {
       AutonomousCommand.schedule();
     }
+    TeleDriveCommand.cancel();
   }
 
   @Override
@@ -230,6 +231,13 @@ public class Robot extends TimedRobot {
 
     DriverStation.reportError("KILLED IT!!", false);
     System.exit(0);
+  }
+
+  public static void resetCamCommand() {
+    CamCommand = new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true)
+        .andThen(new DriveTrainMoveCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true))
+        .andThen(new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true))
+        .andThen(new InstantCommand(Robot.TeleDriveCommand::schedule));
   }
 
   private void UpdateControllers() {

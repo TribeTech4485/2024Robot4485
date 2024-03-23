@@ -41,8 +41,8 @@ public final class Constants {
     public static final int shooterMotor2Id = 5;
     public static final int shooterMotor1Id = 7;
     public static final int conveyorMotorId = 8;
-    public static final int turretMotor1Id = 9;
-    public static final int turretMotor2Id = 10;
+    public static final int turretMotor1Id = 9; // 9
+    public static final int turretMotor2Id = 10; // 10
     public static final int LightPWM = 0;
 
     public static final double intakeSpeedKP = 0.00001;
@@ -63,7 +63,7 @@ public final class Constants {
     public static final double turretPositionKD = 0;
     public static final double turretPositionTolerance = 0;
     public static final double turretPositionMultiplier = 1 / (360 * 100);
-    public static final double turretMaxPower = 0.15;
+    public static final double turretMaxPower = 0.25;
     public static final int turretAmpsMax = 20;
 
     public static final double conveyorProximity = 100;

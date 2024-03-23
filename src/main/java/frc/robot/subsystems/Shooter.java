@@ -44,6 +44,10 @@ public class Shooter extends ManipulatorBase {
     return prepare(SmartDashboard.getNumber("Shooter target", defaultSpeed));
   }
 
+  public Command prepareStop() {
+    return prepare(SmartDashboard.getNumber("Shooter target", defaultSpeed)).setEndOnTarget(true).withTimeout(5);
+  }
+
   /**
    * Sets target speed and schedules it
    * <p>
