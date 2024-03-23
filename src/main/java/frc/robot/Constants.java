@@ -37,10 +37,10 @@ public final class Constants {
    */
   public static final class DeviceConstants {
     public static final int PCMId = 6;
-    public static final int intakeMotorId = 6;
+    public static final int intakeMotorId = 8;
     public static final int shooterMotor2Id = 5;
     public static final int shooterMotor1Id = 7;
-    public static final int conveyorMotorId = 8;
+    public static final int conveyorMotorId = 6;
     public static final int turretMotor1Id = 9;
     public static final int turretMotor2Id = 10;
     public static final int LightPWM = 0;

@@ -111,9 +111,9 @@ public class RobotContainer {
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
       // top outtake
       Robot.Zero.B.get()
-          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(2000).schedule()))
+          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(3000).schedule()))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
-
+ 
       // unintake
       Robot.Zero.PovLeft.get()
           .onTrue(new InstantCommand(() -> {
@@ -176,11 +176,11 @@ public class RobotContainer {
 
       // top intake
       Robot.One.A.get()// .and(() -> !Robot.One.isJoystick)
-          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(-2000).schedule()))
+          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(-3000).schedule()))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
       // top outtake
       Robot.One.B.get()// .and(() -> !Robot.One.isJoystick)
-          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(2000).schedule()))
+          .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(3000).schedule()))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
 
       // STRONK
