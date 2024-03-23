@@ -5,15 +5,18 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
-import frc.robot.commands.DriveTrainMoveCamCommand;
+import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import frc.robot.commands.DriveTrainTurnCamCommand;
 import frc.robot.commands.FullShootCameraCommands;
 
 public class RobotContainer {
   static boolean mode = false;
+  SendableChooser<Command> autoChooser;
 
   public static boolean getMode() {
     return mode;
@@ -29,17 +32,36 @@ public class RobotContainer {
 
   public RobotContainer() {
     configureBindings();
-    SendableChooser<Command> autoChooser = new SendableChooser<>();
+    autoChooser = new SendableChooser<>();
     autoChooser.setDefaultOption("Shoot and back up", new SequentialCommandGroup(
-      Robot.CamCommand,
-      Robot.Shooter.shoot()
+      new PrintCommand("Shoot and back up"),
+      new InstantCommand(Robot::resetCamCommand),
+      new ProxyCommand(Robot::getCamCommand),
+      new PrintCommand("in position"),
+      new InstantCommand(() -> Robot.Shooter.shoot()),
+      new PrintCommand("spun up"),
+      new WaitCommand(2),
+      new InstantCommand(() -> Robot.Intake.setPower(-1)),
+      new WaitCommand(2),
+      new PrintCommand("Done shooting"),
+      new InstantCommand(Robot.Shooter::stopCommands),
+      new InstantCommand(Robot.Intake::stop),
+      new InstantCommand(() -> Robot.DriveTrain.doTankDrive(-0.5, -0.5)),
+      new PrintCommand("driving back"),
+      new WaitCommand(2),
+      new InstantCommand(Robot.DriveTrain::stop),
+      new PrintCommand("done")
     ));
-    autoChooser.addOption("Back up", null);
+    autoChooser.addOption("Back up", new SequentialCommandGroup(
+      new InstantCommand(() -> Robot.DriveTrain.doTankDrive(-0.5, -0.5)),
+      new WaitCommand(2),
+      new InstantCommand(Robot.DriveTrain::stop)
+    ));
     SmartDashboard.putData("Autonomus command", autoChooser);
   }
 
   public Command getAutonomousCommand() {
-    return null;
+    return autoChooser.getSelected();
   }
 
   public void configureBindings() {
@@ -61,12 +83,7 @@ public class RobotContainer {
 
       // cam command
       Robot.Zero.LeftBumper.get().onTrue(new SequentialCommandGroup(
-          new InstantCommand(
-              () -> Robot.CamCommand = new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true)
-                  .andThen(new DriveTrainMoveCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true))
-                  .andThen(new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true))
-                  .andThen(new InstantCommand(Robot.TeleDriveCommand::schedule))),
-
+          new InstantCommand(Robot::resetCamCommand),
           new ProxyCommand(Robot::getCamCommand)))
           .onFalse(new InstantCommand(() -> {
             Robot.CamCommand.cancel();
