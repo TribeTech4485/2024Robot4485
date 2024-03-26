@@ -41,7 +41,7 @@ public class DriveTrainTurnCamCommand extends Command {
     photon = Robot.PhotonVision;
     driveTrain = Robot.DriveTrain;
     gyro = Robot.DriveTrain.getGyro();
-    pidController = new PIDController(0.07, 0.01, 0);
+    pidController = new PIDController(0.15, 0.00, 0); //0.07 and I = 0.01
     pidController.setTolerance(tolerance);
     pidController.setSetpoint(0);
     driveCommand = teleDriveCommand;

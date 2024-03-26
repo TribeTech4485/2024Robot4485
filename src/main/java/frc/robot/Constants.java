@@ -55,10 +55,10 @@ public final class Constants {
     public static final double shooterSpeedKI = 0.0005;
     public static final double shooterSpeedKD = 0;
     public static final double shooterSpeedTolerance = 25;
-    public static final int shooterDefaultSpeed = 5500;
-    public static final int shooterAmpsMax = 10;
+    public static final int shooterDefaultSpeed = 5000;
+    public static final int shooterAmpsMax = 20;
 
-    public static final double turretPositionKP = 0;
+    public static final double turretPositionKP = 0.002;
     public static final double turretPositionKI = 0;
     public static final double turretPositionKD = 0;
     public static final double turretPositionTolerance = 0;
@@ -68,7 +68,7 @@ public final class Constants {
 
     public static final double conveyorProximity = 100;
     public static final double conveyorPower = 1;
-    public static final int conveyorAmpsMax = 20;
+    public static final int conveyorAmpsMax = 30;
   }
 
   public static final class WiringConstants {

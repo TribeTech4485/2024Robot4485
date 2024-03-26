@@ -22,13 +22,13 @@ public class Intake extends ManipulatorBase {
     setSpeedPID(kP, kI, kD, tolerance);
     // setSpeedMultiplier(1);
     setBrakeMode(false);
+    setCurrentLimit(DeviceConstants.intakeAmpsMax);
   }
 
   public void sendIt(int speed) {
     setPositionPID(kP, kI, kD, tolerance);
     setTargetSpeed(speed);
     // getSpeedCommand().andThen(new InstantCommand(() -> fullStop()));
-    setCurrentLimit(DeviceConstants.intakeAmpsMax);
   }
 
   @Override

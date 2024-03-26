@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Robot;
 import frc.robot.Constants.DeviceConstants;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorBase;
 import frc.robot.SyncedLibraries.SystemBases.ManipulatorSpeedCommand;
@@ -25,7 +26,7 @@ public class Shooter extends ManipulatorBase {
     // setSpeedMultiplier(1);
     invertSpecificMotors(true, 1);
     setBrakeMode(false);
-    SmartDashboard.putNumber("Shooter target", defaultSpeed);
+    SmartDashboard.putNumber("Shooter target", SmartDashboard.getNumber("Shooter target", defaultSpeed));
   }
 
   /** prepare speed command */
@@ -66,7 +67,8 @@ public class Shooter extends ManipulatorBase {
   }
 
   // public void adjust() {
-  //   getSpeedCommand().setTargetSpeed(SmartDashboard.getNumber("Shooter target", 0));
+  // getSpeedCommand().setTargetSpeed(SmartDashboard.getNumber("Shooter target",
+  // 0));
   // }
 
   @Override
@@ -74,6 +76,8 @@ public class Shooter extends ManipulatorBase {
     SmartDashboard.putNumber("Shooter speed: ", getCurrentSpeed());
     SmartDashboard.putNumber("Shooter power: ", getAvePower());
     SmartDashboard.putBoolean("Shooter at speed: ", getSpeedCommand() != null ? getSpeedCommand().atSpeed : false);
+    SmartDashboard.putNumber("RPM diff", getEncoder(0).getVelocity() - getEncoder(1).getVelocity());
+    SmartDashboard.putNumber("RPM Question", 5000 - getEncoder(0).getVelocity());
   }
 
   @Override
@@ -86,12 +90,12 @@ public class Shooter extends ManipulatorBase {
   public Command test() {
     setSpeedPID(kP, kI, kD, tolerance);
     return new SequentialCommandGroup(
-      prepare().setEndOnTarget(true),
-      // new InstantCommand(() -> System.out.println("Shoot")),
-      new WaitCommand(1),
-      // new InstantCommand(() -> System.out.println("stop")),
-      new InstantCommand(() -> fullStop())
-      // new InstantCommand(() -> System.out.println("stoped"))
+        prepare().setEndOnTarget(true),
+        // new InstantCommand(() -> System.out.println("Shoot")),
+        new WaitCommand(1),
+        // new InstantCommand(() -> System.out.println("stop")),
+        new InstantCommand(() -> fullStop())
+    // new InstantCommand(() -> System.out.println("stoped"))
     );
   }
 }

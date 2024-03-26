@@ -230,14 +230,20 @@ public class Robot extends TimedRobot {
     System.out.println("Done");
 
     DriverStation.reportError("KILLED IT!!", false);
-    System.exit(0);
+    // System.exit(0);
   }
 
   public static void resetCamCommand() {
-    CamCommand = new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true)
-        .andThen(new DriveTrainMoveCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true))
-        .andThen(new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true))
-        .andThen(new InstantCommand(Robot.TeleDriveCommand::schedule));
+    CamCommand = (new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true)
+        .withTimeout(4))
+        
+        .andThen(new InstantCommand(() -> Robot.Turret.setPower(-0.75)))
+        .andThen(new DriveTrainMoveCamCommand(Robot.TeleDriveCommand,false).setEndOnTarget(true).withTimeout(
+            3))
+        .andThen(new DriveTrainTurnCamCommand(Robot.TeleDriveCommand).setEndOnTarget(true).withTimeout(
+            4))
+        .andThen(new InstantCommand(() -> Robot.Turret.stop()))
+        .andThen(new InstantCommand(() -> Robot.TeleDriveCommand.schedule()));
   }
 
   private void UpdateControllers() {

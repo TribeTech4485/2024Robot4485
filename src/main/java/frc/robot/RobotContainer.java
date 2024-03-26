@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
+import frc.robot.commands.DriveTrainMoveCamCommand;
 import frc.robot.commands.DriveTrainTurnCamCommand;
 import frc.robot.commands.FullShootCameraCommands;
 
@@ -33,30 +35,33 @@ public class RobotContainer {
   public RobotContainer() {
     configureBindings();
     autoChooser = new SendableChooser<>();
+   // Command driveRepeatCommand = new RepeatCommand(new InstantCommand(() -> Robot.DriveTrain.doTankDrive(-0.5, -0.5)));
     autoChooser.setDefaultOption("Shoot and back up", new SequentialCommandGroup(
-      new PrintCommand("Shoot and back up"),
-      new InstantCommand(Robot::resetCamCommand),
-      new ProxyCommand(Robot::getCamCommand),
-      new PrintCommand("in position"),
-      new InstantCommand(() -> Robot.Shooter.shoot()),
-      new PrintCommand("spun up"),
-      new WaitCommand(2),
-      new InstantCommand(() -> Robot.Intake.setPower(-1)),
-      new WaitCommand(2),
-      new PrintCommand("Done shooting"),
-      new InstantCommand(Robot.Shooter::stopCommands),
-      new InstantCommand(Robot.Intake::stop),
-      new InstantCommand(() -> Robot.DriveTrain.doTankDrive(-0.5, -0.5)),
-      new PrintCommand("driving back"),
-      new WaitCommand(2),
-      new InstantCommand(Robot.DriveTrain::stop),
-      new PrintCommand("done")
-    ));
+        new PrintCommand("Shoot and back up"),
+        new InstantCommand(Robot::resetCamCommand),
+        new ProxyCommand(Robot::getCamCommand),
+        new PrintCommand("in position"),
+        new InstantCommand(() -> Robot.Shooter.prepare().setEndOnTarget(false).schedule()),
+        new PrintCommand("Test"),
+        new PrintCommand("spun up"),
+        new WaitCommand(3),
+        new InstantCommand(() -> Robot.Conveyor.setPower(-1)),
+        new WaitCommand(2),
+        new PrintCommand("Done shooting"),
+        new InstantCommand(Robot.Shooter::stopCommands),
+        new InstantCommand(Robot.Conveyor::stop),
+        new DriveTrainMoveCamCommand(Robot.TeleDriveCommand, true),
+       // driveRepeatCommand,
+        new PrintCommand("driving back"),
+        new WaitCommand(2),
+        new InstantCommand(Robot.DriveTrain::stop),
+        new PrintCommand("done")));
+
     autoChooser.addOption("Back up", new SequentialCommandGroup(
-      new InstantCommand(() -> Robot.DriveTrain.doTankDrive(-0.5, -0.5)),
-      new WaitCommand(2),
-      new InstantCommand(Robot.DriveTrain::stop)
-    ));
+        new InstantCommand(() -> Robot.DriveTrain.doTankDrive(0.5, 0.5)),
+        new WaitCommand(2),
+        new InstantCommand(Robot.DriveTrain::stop)));
+
     SmartDashboard.putData("Autonomus command", autoChooser);
   }
 
@@ -130,7 +135,7 @@ public class RobotContainer {
       Robot.Zero.B.get()
           .onTrue(new InstantCommand(() -> Robot.Shooter.prepare(3000).schedule()))
           .onFalse(new InstantCommand(() -> Robot.Shooter.stopCommands()));
- 
+
       // unintake
       Robot.Zero.PovLeft.get()
           .onTrue(new InstantCommand(() -> {
@@ -205,6 +210,9 @@ public class RobotContainer {
           .onTrue(new InstantCommand(() -> Robot.Turret.sudoMode(true)));
       Robot.One.RightStickPress.get()// .and(() -> !Robot.One.isJoystick)
           .onTrue(new InstantCommand(() -> Robot.Turret.sudoMode(false)));
+
+      Robot.One.Options.get().onTrue(new InstantCommand(() -> Robot.Conveyor.setPower(1)))
+          .onFalse(new InstantCommand(() -> Robot.Conveyor.setPower(0)));
 
       /*
        * // Joystick controlls

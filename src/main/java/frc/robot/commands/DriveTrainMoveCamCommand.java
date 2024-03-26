@@ -12,8 +12,8 @@ public class DriveTrainMoveCamCommand extends Command {
   DriveTrain2024 driveTrain;
   PIDController pidController;
   boolean onTarget = false;
-  final double tolerance = 0.2;
-  final int onTargetCounterStart = 5;
+  final double tolerance = 0.05;
+  final int onTargetCounterStart = 15;
   int onTargetCounter = onTargetCounterStart;
   boolean endOnTarget = false;
   double memoryDistance = 0;
@@ -23,6 +23,7 @@ public class DriveTrainMoveCamCommand extends Command {
   Command driveCommand;
   boolean hasEverSeenTarget = false;
   final boolean wasInBrakeMode;
+  double finalDist = 1.6;
 
   public DriveTrainMoveCamCommand() {
     // addRequirements(Robot.DriveTrain);
@@ -35,13 +36,18 @@ public class DriveTrainMoveCamCommand extends Command {
     wasInBrakeMode = false;
   }
 
-  public DriveTrainMoveCamCommand(Command teleDriveCommand) {
+  public DriveTrainMoveCamCommand(Command teleDriveCommand, boolean isDriveOut) {
     addRequirements(Robot.DriveTrain);
     photon = Robot.PhotonVision;
     driveTrain = Robot.DriveTrain;
+    if (isDriveOut){
+      finalDist = 10;
+    }else{
+      finalDist = 1.6;
+    }
     pidController = new PIDController(0.2, 0.01, 0);
-    pidController.setTolerance(tolerance);
-    pidController.setSetpoint(1.3);
+    // pidController.setTolerance(tolerance);
+    pidController.setSetpoint(finalDist);
     driveCommand = teleDriveCommand;
     wasInBrakeMode = driveTrain.getBrakeMode();
   }
@@ -82,7 +88,7 @@ public class DriveTrainMoveCamCommand extends Command {
 
     // SmartDashboard.putNumber("Target angle", angle);
     double speed = pidController.calculate(distance);
-    speed *= 1;
+    speed *= 5;
     SmartDashboard.putNumber("Dist Turn speed", speed);
 
     // clamp
@@ -91,8 +97,8 @@ public class DriveTrainMoveCamCommand extends Command {
     }
 
     driveTrain.doTankDrive(speed, speed);
-    if (Math.abs(distance) - 1.5 < tolerance * 1.5) {
-      SmartDashboard.putNumber("ON TARGER COUNTER", onTargetCounter);
+    SmartDashboard.putNumber("ON TARGER COUNTER Move", Math.abs(distance) - finalDist);
+    if (Math.abs(distance) - finalDist < tolerance) {
       if (onTargetCounter-- < 0) {
         onTarget = true;
       } else {
