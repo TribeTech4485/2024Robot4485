@@ -12,7 +12,7 @@ import frc.robot.SyncedLibraries.SystemBases.TeleDriveCommandBase;
 /** Add your docs here. */
 public class TeleDriveCommand2024 extends TeleDriveCommandBase {
   public TeleDriveCommand2024(AutoControllerSelector... controllerSelectors) {
-    super(Robot.DriveTrain, false, controllerSelectors);
+    super(Robot.DriveTrain, controllerSelectors);
     defaultExecute = false;
   }
 
